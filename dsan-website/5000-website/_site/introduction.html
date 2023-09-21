@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>DSAN-5000: Project - Clustering</title>
+<title>DSAN-5000: Project - Introduction</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,25 +20,44 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-html/quarto.js"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -70,7 +89,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">DSAN-5000: Project</span>
     </a>
   </div>
@@ -81,15 +100,15 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../index.html" rel="" target="">
+    <a class="nav-link" href="./index.html" rel="" target="">
  <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../about_me.html" rel="" target="">
+    <a class="nav-link" href="./about_me.html" rel="" target="">
  <span class="menu-text">About Me</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../introduction.html" rel="" target="">
+    <a class="nav-link active" href="./introduction.html" rel="" target="" aria-current="page">
  <span class="menu-text">Introduction</span></a>
   </li>  
   <li class="nav-item">
@@ -97,39 +116,39 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Code</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../data/data.html" rel="" target="">
+    <a class="nav-link" href="./data/data.html" rel="" target="">
  <span class="menu-text">Data</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../data_gathering/data_gathering.html" rel="" target="">
+    <a class="nav-link" href="./data_gathering/data_gathering.html" rel="" target="">
  <span class="menu-text">Data Gathering</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../data_cleaning/data_cleaning.html" rel="" target="">
+    <a class="nav-link" href="./data_cleaning/data_cleaning.html" rel="" target="">
  <span class="menu-text">Data Cleaning</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../eda/eda.html" rel="" target="">
+    <a class="nav-link" href="./eda/eda.html" rel="" target="">
  <span class="menu-text">Data Exploration</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../clustering/clustering.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="./clustering/clustering.html" rel="" target="">
  <span class="menu-text">Clustering</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../dimensionality_reduction/dimensionality_reduction.html" rel="" target="">
+    <a class="nav-link" href="./dimensionality_reduction/dimensionality_reduction.html" rel="" target="">
  <span class="menu-text">Dimensionality Reduction</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../decision_trees/decision_trees.html" rel="" target="">
+    <a class="nav-link" href="./decision_trees/decision_trees.html" rel="" target="">
  <span class="menu-text">Decision Trees</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../arm/arm.html" rel="" target="">
+    <a class="nav-link" href="./arm/arm.html" rel="" target="">
  <span class="menu-text">ARM</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../conclusions.html" rel="" target="">
+    <a class="nav-link" href="./conclusions.html" rel="" target="">
  <span class="menu-text">Conclusions</span></a>
   </li>  
 </ul>
@@ -144,14 +163,26 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#project-overview" id="toc-project-overview" class="nav-link active" data-scroll-target="#project-overview">Project Overview</a></li>
+  <li><a href="#questions-to-answer" id="toc-questions-to-answer" class="nav-link" data-scroll-target="#questions-to-answer">Questions To Answer</a></li>
+  <li><a href="#previous-research" id="toc-previous-research" class="nav-link" data-scroll-target="#previous-research">Previous Research</a>
+  <ul class="collapse">
+  <li><a href="#evidence-of-bias-in-ncaa-tournament-selection-and-seeding-coleman2010evidence" id="toc-evidence-of-bias-in-ncaa-tournament-selection-and-seeding-coleman2010evidence" class="nav-link" data-scroll-target="#evidence-of-bias-in-ncaa-tournament-selection-and-seeding-coleman2010evidence">Evidence of bias in NCAA tournament selection and seeding <span class="citation" data-cites="coleman2010evidence">(Coleman, DuMond, and Lynch 2010)</span></a></li>
+  <li><a href="#modeling-the-ncaa-basketball-tournament-selection-process-using-a-decision-tree-dutta2018modeling" id="toc-modeling-the-ncaa-basketball-tournament-selection-process-using-a-decision-tree-dutta2018modeling" class="nav-link" data-scroll-target="#modeling-the-ncaa-basketball-tournament-selection-process-using-a-decision-tree-dutta2018modeling">Modeling the NCAA basketball tournament selection process using a decision tree <span class="citation" data-cites="dutta2018modeling">(Dutta and Jacobson 2018)</span></a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Clustering</h1>
+<h1 class="title">Introduction</h1>
 </div>
 
 
@@ -166,11 +197,55 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>Build out your website tab for “clustering”</p>
+<section id="project-overview" class="level2">
+<h2 class="anchored" data-anchor-id="project-overview">Project Overview</h2>
+<p>In this project, I look to investigate questions relating to the NCAA Men’s Basketball Tournament selection process. Commonly known as March Madness, the tournament is hosted every March and April, consisting of 68 teams participating in a single-elimination format.</p>
+<p>Of those 68 teams, 32 qualify automatically by winning their individual conference tournament. The remaining 36 spots are “at-large” bids, given to teams deemed most worthy by a small selection committee. Many attempts have been made to model the committee’s decision making process, and I hope to investigate the specific attributes that the committee looks for when making their selections.</p>
+<p>As of the 2023-24 season, there are 361 teams competing at the Division 1 level across 32 conferences. Each team plays an ~30-35 game season, consisting of ~10-15 non-conference opponents and the rest played against teams within their conference.</p>
+</section>
+<section id="questions-to-answer" class="level2">
+<h2 class="anchored" data-anchor-id="questions-to-answer">Questions To Answer</h2>
+<ul>
+<li><p>Which factors are most important for NCAA Tournament selection?</p></li>
+<li><p>Does playing an easier non-conference schedule punish teams competing for at-large bids?</p></li>
+<li><p>Who are the biggest tournament snubs of all time?</p></li>
+<li><p>Who are the worst tournament selections of all time?</p></li>
+<li><p>Does historical tournament success lead to more favorable future seeding?</p></li>
+<li><p>What role do efficiency metrics play in tournament seeding?</p></li>
+<li><p>Are end of season trends weighed more heavily during tournament selection?</p></li>
+<li><p>How many teams per year get auto-bids who wouldn’t have otherwise qualified for the tournament?</p></li>
+<li><p>What role does human bias play in tournament seeding?</p></li>
+<li><p>Would automating tournament selection be advisable?</p></li>
+<li><p>What role does seeding play in actual tournament success?</p></li>
+<li><p>Do efficiency metrics lead to a self-fulfilling feedback loop once the season reaches conference play?</p></li>
+</ul>
+</section>
+<section id="previous-research" class="level2">
+<h2 class="anchored" data-anchor-id="previous-research">Previous Research</h2>
+<p>A few research papers have been written about the NCAA Tournament Selection Process. Here are the summaries of two of them.</p>
+<section id="evidence-of-bias-in-ncaa-tournament-selection-and-seeding-coleman2010evidence" class="level3">
+<h3 class="anchored" data-anchor-id="evidence-of-bias-in-ncaa-tournament-selection-and-seeding-coleman2010evidence">Evidence of bias in NCAA tournament selection and seeding <span class="citation" data-cites="coleman2010evidence">(<a href="#ref-coleman2010evidence" role="doc-biblioref">Coleman, DuMond, and Lynch 2010</a>)</span></h3>
+<p>This paper uses 41 different data sets collected from the 1999-2008 seasons to see how well predictive metrics correlated with actual tournament seeing. They perform this analysis to investigate if certain conferences/teams have unfair bias impacting their seeding outcome. They ultimately find that there is substantial evidence of bias, especially in favor of teams who have some sort of representation within the Selection Committee.</p>
+<p>It is interesting to note that the tournament format and metrics looked at have changed over the time period since this paper was written. Three more at large teams now get bids to the tournament, and the leading efficiency metrics used in College Basketball had not been adopted for use by the committee at this point in time. It will be interesting to see how things have changed since this paper was written.</p>
+</section>
+<section id="modeling-the-ncaa-basketball-tournament-selection-process-using-a-decision-tree-dutta2018modeling" class="level3">
+<h3 class="anchored" data-anchor-id="modeling-the-ncaa-basketball-tournament-selection-process-using-a-decision-tree-dutta2018modeling">Modeling the NCAA basketball tournament selection process using a decision tree <span class="citation" data-cites="dutta2018modeling">(<a href="#ref-dutta2018modeling" role="doc-biblioref">Dutta and Jacobson 2018</a>)</span></h3>
+<p>The paper introduces a decision tree model aiming to replicate the NCAA basketball tournament’s team selection process. The author’s model attempts to mimic this process by utilizing expert rankings and performance metrics, including RPI , top 50 wins, rank 200+ losses, strength of schedule, games against top 100 teams, and recent performance. The model was evaluated using data from 2012 to 2016 and ultimately demonstrated a high level of accuracy in selecting teams for the tournament.</p>
+<p>The paper mentions that models will never be able to fully predict the human element of the tournament selection. Individual bias is hard to account for, but this retroactive fitting model is an interesting way to look at things. As formats and metrics continue to change, I wonder how successful a past-looking model is at being able to predict the future but there is a lot of valuable information here. Ultimately, I found this approach to be pretty interesting and will likely hope to model a similar approach during my project.</p>
 
 
 
-</main> <!-- /main -->
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-coleman2010evidence" class="csl-entry" role="listitem">
+Coleman, B Jay, J Michael DuMond, and Allen K Lynch. 2010. <span>“Evidence of Bias in NCAA Tournament Selection and Seeding.”</span> <em>Managerial and Decision Economics</em> 31 (7): 431–52.
+</div>
+<div id="ref-dutta2018modeling" class="csl-entry" role="listitem">
+Dutta, Shouvik, and Sheldon H Jacobson. 2018. <span>“Modeling the NCAA Basketball Tournament Selection Process Using a Decision Tree.”</span> <em>Journal of Sports Analytics</em> 4 (1): 65–71.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

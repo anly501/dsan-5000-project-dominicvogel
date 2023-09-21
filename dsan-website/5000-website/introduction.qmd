@@ -1,0 +1,58 @@
+---
+title: "Introduction"
+format: html
+bibliography: reference.bib
+toc: True
+---
+
+
+## Project Overview
+
+In this project, I look to investigate questions relating to the NCAA Men's Basketball Tournament selection process. Commonly known as March Madness, the tournament is hosted every March and April, consisting of 68 teams participating in a single-elimination format.
+
+Of those 68 teams, 32 qualify automatically by winning their individual conference tournament. The remaining 36 spots are "at-large" bids, given to teams deemed most worthy by a small selection committee. Many attempts have been made to model the committee's decision making process, and I hope to investigate the specific attributes that the committee looks for when making their selections.
+
+As of the 2023-24 season, there are 361 teams competing at the Division 1 level across 32 conferences. Each team plays an ~30-35 game season, consisting of ~10-15 non-conference opponents and the rest played against teams within their conference. 
+
+## Questions To Answer
+
+* Which factors are most important for NCAA Tournament selection?
+
+* Does playing an easier non-conference schedule punish teams competing for at-large bids?
+
+* Who are the biggest tournament snubs of all time?
+
+* Who are the worst tournament selections of all time?
+
+* Does historical tournament success lead to more favorable future seeding?
+
+* What role do efficiency metrics play in tournament seeding?
+
+* Are end of season trends weighed more heavily during tournament selection?
+
+* How many teams per year get auto-bids who wouldn't have otherwise qualified for the tournament?
+
+* What role does human bias play in tournament seeding?
+
+* Would automating tournament selection be advisable?
+
+* What role does seeding play in actual tournament success?
+
+* Do efficiency metrics lead to a self-fulfilling feedback loop once the season reaches conference play?
+
+
+## Previous Research
+
+A few research papers have been written about the NCAA Tournament Selection Process. Here are the summaries of two of them.
+
+### Evidence of bias in NCAA tournament selection and seeding [@coleman2010evidence]
+
+This paper uses 41 different data sets collected from the 1999-2008 seasons to see how well predictive metrics correlated with actual tournament seeing. They perform this analysis to investigate if certain conferences/teams have unfair bias impacting their seeding outcome. They ultimately find that there is substantial evidence of bias, especially in favor of teams who have some sort of representation within the Selection Committee. 
+
+It is interesting to note that the tournament format and metrics looked at have changed over the time period since this paper was written. Three more at large teams now get bids to the tournament, and the leading efficiency metrics used in College Basketball had not been adopted for use by the committee at this point in time. It will be interesting to see how things have changed since this paper was written.
+
+### Modeling the NCAA basketball tournament selection process using a decision tree [@dutta2018modeling]
+
+The paper introduces a decision tree model aiming to replicate the NCAA basketball tournament's team selection process. The author's model attempts to mimic this process by utilizing expert rankings and performance metrics, including RPI , top 50 wins, rank 200+ losses, strength of schedule, games against top 100 teams, and recent performance. The model was evaluated using data from 2012 to 2016 and ultimately demonstrated a high level of accuracy in selecting teams for the tournament. 
+
+The paper mentions that models will never be able to fully predict the human element of the tournament selection. Individual bias is hard to account for, but this retroactive fitting model is an interesting way to look at things. As formats and metrics continue to change, I wonder how successful a past-looking model is at being able to predict the future but there is a lot of valuable information here. Ultimately, I found this approach to be pretty interesting and will likely hope to model a similar approach during my project.

@@ -4,13 +4,34 @@ project:
 website:
   title: "DSAN-5000: Project"
   navbar:
+    search: true
     left:
       - href: index.qmd
         text: Home
-      - href: clustering/clustering.qmd
-        text: Clustering
+      - href: about_me.qmd
+        text: About Me
+      - href: introduction.qmd
+        text: Introduction
+      - href: https://github.com/anly501/dsan-5000-project-dominicvogel
+        text: Code
+      - href: data/data.qmd
+        text: Data
+      - href: data_gathering/data_gathering.qmd
+        text: Data Gathering
+      - href: data_cleaning/data_cleaning.qmd
+        text: Data Cleaning
       - href: eda/eda.ipynb
         text: Data Exploration
+      - href: clustering/clustering.qmd
+        text: Clustering
+      - href: dimensionality_reduction/dimensionality_reduction.qmd
+        text: Dimensionality Reduction
+      - href: decision_trees/decision_trees.qmd
+        text: Decision Trees
+      - href: arm/arm.qmd
+        text: ARM
+      - href: conclusions.qmd
+        text: Conclusions
 format:
   html:
     theme: cosmo

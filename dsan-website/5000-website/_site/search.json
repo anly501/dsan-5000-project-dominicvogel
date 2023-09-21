@@ -2,9 +2,9 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "DSAN-5000: Introduction",
+    "title": "DSAN-5000 Project Homepage",
     "section": "",
-    "text": "See the following link for more information about the author: about me\nThis is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\nHIGHLY RECOMMENDED\n\nIt is highly recommended that you build your website using .ipynb files and NOT .qmdfiles\nFunctionally the two formats are basically identical, i.e. they are just Markdown + Code\nHowever there is ONE MAJOR DIFFERENCE, i.e. .ipynb stores the code outputs in the meta-data of the file\n\nThis means you ONLY HAVE TO RUN THE CODE ONCE with .ipynb\n.qmd will run the code every time you build the website, which can be very slow\n\nThere are caching options for .qmd, however, they are “messier” that just using .ipynb\n\nNote: .qmd is fine if there is no code, in which case it is basically just a Markdown file\n\nConverting between the two\n\nYou can switch between the two formats using\nquarto convert clustering.qmd this will output a .ipynb version called clustering.ipynb\nquarto convert eda.ipynb this will output a .qmd version called eda.qmd\n\nYOU CAN RUN R CODE IN VSC WITH .ipynb, see the following link\n\nhttps://saturncloud.io/blog/how-to-use-jupyter-r-kernel-with-visual-studio-code/\n\nIt is possible, but NOT RECOMMENDED, to mix Python and R code in the same file\n\nIMPORTANT ASIDE\n\nA .ipynb file is simply a JSON file with a specialized structural format\nYou can see this by running more eda/eda.ipynb from the command line\nWhich will output the following;\n\n\nTIP FOR MAC USERS\n\ncommand+control+shift+4 is very useful on a mac.\n\nIt takes a screenshot and saves it to the clip-board\n\nThe following VSC extension allows you to paste images from the clip-board with alt+command+v.\n\ntab is your best friend when using the command line, since it does auto-completion\nopen ./path_to_file will open any file or directory from the command line"
+    "text": "This is Dominic’s homepage. Please navigate to the other tabs."
   },
   {
     "objectID": "eda/eda.html",
@@ -33,5 +33,68 @@
     "title": "Clustering",
     "section": "",
     "text": "Build out your website tab for “clustering”"
+  },
+  {
+    "objectID": "about_me.html",
+    "href": "about_me.html",
+    "title": "About Me",
+    "section": "",
+    "text": "Dominic Vogel is a first-year student in Georgetown’s MS Data Science and Analytics program. He is enrolled in the accelerated track, taking classes concurrently with undergraduate coursework. For undergrad, Dominic is enrolled in Georgetown’s McDonough School of Business, double-majoring in Operations & Analytics and Finance. Outside of the classroom, Dominic is the President of Georgetown’s Transfer Council, helping foster a transfer student community on campus. He also runs Georgetown Survivor, hosting a mock season on campus this fall. Dominic is also a big Minnesota Twins fan, tries to listen to a new album each day, and knows far too much about Pokemon.\n\nThis is a picture of me from when I went to Mt. Rainier this summer.\n\n\nHometown: Minneapolis, MN\nFavorite Album of 2023: Struggler- Genesis Owusu\nFavorite Pokemon: Torterra\nFavorite Sports Teams: Minnesota Twins, Minnesota Timberwolves, Creighton Bluejays\n\n\n\n\n2025: Georgetown University- MS Data Science and Analytics\n2024: Georgetown University- BS Operations & Analytics | Finance"
+  },
+  {
+    "objectID": "about_me.html#fun-facts-about-dominic",
+    "href": "about_me.html#fun-facts-about-dominic",
+    "title": "About Me",
+    "section": "",
+    "text": "Hometown: Minneapolis, MN\nFavorite Album of 2023: Struggler- Genesis Owusu\nFavorite Pokemon: Torterra\nFavorite Sports Teams: Minnesota Twins, Minnesota Timberwolves, Creighton Bluejays"
+  },
+  {
+    "objectID": "about_me.html#education",
+    "href": "about_me.html#education",
+    "title": "About Me",
+    "section": "",
+    "text": "2025: Georgetown University- MS Data Science and Analytics\n2024: Georgetown University- BS Operations & Analytics | Finance"
+  },
+  {
+    "objectID": "data/data.html",
+    "href": "data/data.html",
+    "title": "Data",
+    "section": "",
+    "text": "This page is a temporary placeholder until I get further along in the course."
+  },
+  {
+    "objectID": "about_me.html#about-dominic",
+    "href": "about_me.html#about-dominic",
+    "title": "About Me",
+    "section": "",
+    "text": "Dominic Vogel is a first-year student in Georgetown’s MS Data Science and Analytics program. He is enrolled in the accelerated track, taking classes concurrently with undergraduate coursework. For undergrad, Dominic is enrolled in Georgetown’s McDonough School of Business, double-majoring in Operations & Analytics and Finance. Outside of the classroom, Dominic is the President of Georgetown’s Transfer Council, helping foster a transfer student community on campus. He also runs Georgetown Survivor, hosting a mock season on campus this fall. Dominic is also a big Minnesota Twins fan, tries to listen to a new album each day, and knows far too much about Pokemon.\n\nThis is a picture of me from when I went to Mt. Rainier this summer.\n\n\nHometown: Minneapolis, MN\nFavorite Album of 2023: Struggler- Genesis Owusu\nFavorite Pokemon: Torterra\nFavorite Sports Teams: Minnesota Twins, Minnesota Timberwolves, Creighton Bluejays\n\n\n\n\n2025: Georgetown University- MS Data Science and Analytics\n2024: Georgetown University- BS Operations & Analytics | Finance"
+  },
+  {
+    "objectID": "introduction.html",
+    "href": "introduction.html",
+    "title": "Introduction",
+    "section": "",
+    "text": "In this project, I look to investigate questions relating to the NCAA Men’s Basketball Tournament selection process. Commonly known as March Madness, the tournament is hosted every March and April, consisting of 68 teams participating in a single-elimination format.\nOf those 68 teams, 32 qualify automatically by winning their individual conference tournament. The remaining 36 spots are “at-large” bids, given to teams deemed most worthy by a small selection committee. Many attempts have been made to model the committee’s decision making process, and I hope to investigate the specific attributes that the committee looks for when making their selections.\nAs of the 2023-24 season, there are 361 teams competing at the Division 1 level across 32 conferences. Each team plays an ~30-35 game season, consisting of ~10-15 non-conference opponents and the rest played against teams within their conference."
+  },
+  {
+    "objectID": "introduction.html#project-overview",
+    "href": "introduction.html#project-overview",
+    "title": "Introduction",
+    "section": "",
+    "text": "In this project, I look to investigate questions relating to the NCAA Men’s Basketball Tournament selection process. Commonly known as March Madness, the tournament is hosted every March and April, consisting of 68 teams participating in a single-elimination format.\nOf those 68 teams, 32 qualify automatically by winning their individual conference tournament. The remaining 36 spots are “at-large” bids, given to teams deemed most worthy by a small selection committee. Many attempts have been made to model the committee’s decision making process, and I hope to investigate the specific attributes that the committee looks for when making their selections.\nAs of the 2023-24 season, there are 361 teams competing at the Division 1 level across 32 conferences. Each team plays an ~30-35 game season, consisting of ~10-15 non-conference opponents and the rest played against teams within their conference."
+  },
+  {
+    "objectID": "introduction.html#questions-to-answer",
+    "href": "introduction.html#questions-to-answer",
+    "title": "Introduction",
+    "section": "Questions To Answer",
+    "text": "Questions To Answer\n\nWhich factors are most important for NCAA Tournament selection?\nDoes playing an easier non-conference schedule punish teams competing for at-large bids?\nWho are the biggest tournament snubs of all time?\nWho are the worst tournament selections of all time?\nDoes historical tournament success lead to more favorable future seeding?\nWhat role do efficiency metrics play in tournament seeding?\nAre end of season trends weighed more heavily during tournament selection?\nHow many teams per year get auto-bids who wouldn’t have otherwise qualified for the tournament?\nWhat role does human bias play in tournament seeding?\nWould automating tournament selection be advisable?\nWhat role does seeding play in actual tournament success?\nDo efficiency metrics lead to a self-fulfilling feedback loop once the season reaches conference play?"
+  },
+  {
+    "objectID": "introduction.html#previous-research",
+    "href": "introduction.html#previous-research",
+    "title": "Introduction",
+    "section": "Previous Research",
+    "text": "Previous Research\nA few research papers have been written about the NCAA Tournament Selection Process. Here are the summaries of two of them.\n\nEvidence of bias in NCAA tournament selection and seeding (Coleman, DuMond, and Lynch 2010)\nThis paper uses 41 different data sets collected from the 1999-2008 seasons to see how well predictive metrics correlated with actual tournament seeing. They perform this analysis to investigate if certain conferences/teams have unfair bias impacting their seeding outcome. They ultimately find that there is substantial evidence of bias, especially in favor of teams who have some sort of representation within the Selection Committee.\nIt is interesting to note that the tournament format and metrics looked at have changed over the time period since this paper was written. Three more at large teams now get bids to the tournament, and the leading efficiency metrics used in College Basketball had not been adopted for use by the committee at this point in time. It will be interesting to see how things have changed since this paper was written.\n\n\nModeling the NCAA basketball tournament selection process using a decision tree (Dutta and Jacobson 2018)\nThe paper introduces a decision tree model aiming to replicate the NCAA basketball tournament’s team selection process. The author’s model attempts to mimic this process by utilizing expert rankings and performance metrics, including RPI , top 50 wins, rank 200+ losses, strength of schedule, games against top 100 teams, and recent performance. The model was evaluated using data from 2012 to 2016 and ultimately demonstrated a high level of accuracy in selecting teams for the tournament.\nThe paper mentions that models will never be able to fully predict the human element of the tournament selection. Individual bias is hard to account for, but this retroactive fitting model is an interesting way to look at things. As formats and metrics continue to change, I wonder how successful a past-looking model is at being able to predict the future but there is a lot of valuable information here. Ultimately, I found this approach to be pretty interesting and will likely hope to model a similar approach during my project."
   }
 ]

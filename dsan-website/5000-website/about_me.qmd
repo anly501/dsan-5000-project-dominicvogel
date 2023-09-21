@@ -1,0 +1,28 @@
+---
+title: "About Me"
+format: html
+---
+
+## About Dominic
+Dominic Vogel is a first-year student in Georgetown's MS Data Science and Analytics program. He is enrolled in the accelerated track, taking classes concurrently with undergraduate coursework. For undergrad, Dominic is enrolled in Georgetown's McDonough School of Business, double-majoring in Operations & Analytics and Finance. Outside of the classroom, Dominic is the President of Georgetown's Transfer Council, helping foster a transfer student community on campus. He also runs Georgetown Survivor, hosting a mock season on campus this fall. Dominic is also a big Minnesota Twins fan, tries to listen to a new album each day, and knows far too much about Pokemon.
+
+<img src="./images/photo.png" width="320" height="400">
+
+This is a picture of me from when I went to Mt. Rainier this summer.
+
+### Fun Facts About Dominic
+Hometown: Minneapolis, MN 
+
+Favorite Album of 2023: Struggler- Genesis Owusu
+
+Favorite Pokemon: Torterra
+
+Favorite Sports Teams: Minnesota Twins, Minnesota Timberwolves, Creighton Bluejays
+
+<img src="./images/mn.png" width="300" height="200">
+
+
+### Education
+2025: Georgetown University- MS Data Science and Analytics
+
+2024: Georgetown University- BS Operations & Analytics | Finance

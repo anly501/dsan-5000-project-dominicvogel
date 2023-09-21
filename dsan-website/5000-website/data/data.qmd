@@ -1,0 +1,6 @@
+---
+title: "Data"
+format: html
+---
+
+This page is a temporary placeholder until I get further along in the course.
