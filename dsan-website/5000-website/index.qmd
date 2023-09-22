@@ -3,3 +3,7 @@ title: "DSAN-5000 Project Homepage"
 ---
 
 This is Dominic's homepage. Please navigate to the other tabs.
+
+Name: Dominic Vogel
+
+NetID: dav44
