@@ -12,6 +12,8 @@ website:
         text: About Me
       - href: introduction.qmd
         text: Introduction
+      - href: https://github.com/anly501/dsan-5000-project-dominicvogel/tree/main/dsan-website/5000-website/data
+        text: Data
       - href: https://github.com/anly501/dsan-5000-project-dominicvogel
         text: Code
       - href: data_gathering/data_gathering.qmd
@@ -21,7 +23,7 @@ website:
       - href: eda/eda.qmd
         text: Data Exploration
       - href: naive_bayes/naive_bayes.qmd
-        test: Naive Bayes
+        text: Naive Bayes
       - href: clustering/clustering.qmd
         text: Clustering
       - href: dimensionality_reduction/dimensionality_reduction.qmd
