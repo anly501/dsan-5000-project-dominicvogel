@@ -1,5 +1,158 @@
 ---
 title: "Data Gathering"
-format: html
+format:
+  html:
+    code-fold: true
+    toc: true
+    code-summary: "Show Code"
 ---
 
+# Data Gathering
+
+### Accessing the *ncaahoopR* R package
+
+For my data sources, there were a few places I wanted to start.
+
+The first is the ncaahoopR package. The package scrapes the ESPN.com website to generate different data sets based on publicly available NCAA basketball data. ncaahoopR is easy to install and use, and allows me to generate data from any games tracked on ESPN.
+
+Further information about the package can be found [here](https://github.com/lbenz730/ncaahoopR).
+
+Here is an example of me exploring this package. I used the "get_pbp" function to collect a data frame of all play-by-play data for Creighton (my favorite team) from the 2022-23 season. Each time the function is called, the package scrapes all game data from the entire season, which takes a few minutes to collect.
+
+```{r}
+#| output: false
+
+library(ncaahoopR)
+
+creighton <- get_pbp("Creighton", "2022-23")
+
+write.csv(creighton, file = "../data/creighton_2022_23.csv", row.names = FALSE)
+```
+
+```{r}
+head(creighton[, 1:5], 10)
+```
+
+```{r}
+cat("Number of rows:", nrow(creighton), "\n")
+cat("Number of columns:", ncol(creighton), "\n")
+```
+
+Obviously, this is a massive data set with lots of potential insights. One thing that initially stood out to me are the two win probability columns. The first, "win_prob", is a snapshot of the home team's win probability during a specific play after factoring in pre-game point spread. The other column, "naive_win_prob", doesn't use pre-game point spread to determine win probability.
+
+```{r}
+library(dplyr)
+
+creighton_change <- creighton %>% filter(scoring_play == TRUE,
+  win_prob >= lag(win_prob, default = first(win_prob)) + .2 |     
+  win_prob <= lag(win_prob, default = first(win_prob)) - .2)
+
+head(creighton_change[, 1:5], 10)
+```
+
+In the filtered data frame above, I looked to see how many scoring plays there were throughout the season that impacted Creighton's win percentage by +/- 20%. Of the 11444 plays recorded during the season, only 32 fit such criteria.
+
+### Accessing *Barttorvik's NCAA Data* using Python
+
+Barttorvik is one of the two major sites for advanced college basketball team statistics. They track dozens of advanced metrics, creating efficiency and team rank methodology with the goal of determining the best teams. College basketball had 363 NCAA Division 1 Men's programs in 2023. Since there are so many teams, it becomes extremely difficult to effectively evaluate teams head to head.
+
+This site looks to make comparisons between teams and across years much easier. Luckily, they make all of their data sets free and easily accessible [here](https://barttorvik.com/).
+
+I started by using the requests package in Python to import the .csv of last year's data. It contains 45 columns and 363 rows (one for each team). As the project goes on, I will likely incorporate previous years' data as well in order to analyze trends from year to year.
+
+```{python}
+#Imports
+import pandas as pd
+import numpy as np
+import requests
+import csv
+```
+
+```{python}
+#| output: false
+
+csv_url = "http://barttorvik.com/2023_team_results.csv"
+local_filename = "barttorvik_2023.csv"
+
+response = requests.get(csv_url)
+
+if response.status_code == 200:
+    with open(local_filename, 'wb') as outfile:
+        outfile.write(response.content)
+else:
+    print("Failed to retrieve the file. Status code:", response.status_code)
+
+```
+
+```{python}
+
+barttorvik_df = pd.read_csv("barttorvik_2023.csv")
+
+barttorvik_df.columns = ['Team', 'Conf', 'Record', 'AdjOE', 'OERank', 'AdjDE', 'DERank', 'Barthag', 'Rank', 'ProjW', 'ProjL', 'ProConW', 'ProConL', 'ConRec', 'SOS', 'NCSOS', 'Consos', 'ProjSOS', 'ProjNonconSOS', 'ProjConSOS', 'EliteSOS', 'EliteNonconSOS', 'OppOE', 'OppDE', 'OppProjOE', 'OppProjDE', 'ConAdjOE','ConAdjDE', 'QualO', 'QualD', 'QualBarthag', 'QualGames', 'FUN', 'ConPF','ConPA', 'ConPoss', 'ConOE', 'ConDE', 'ConSOSRemain', 'ConfWinPct', 'WAB', 'WABRk', 'FunRk', 'AdjT']
+
+print(barttorvik_df.head())
+
+barttorvik_df.to_csv("../data/barttorvik_2023.csv", index= False)
+
+```
+
+When importing the 2023 data, I realized that the column names imported incorrectly. I went through and renamed each column in order to ensure the data was properly represented and easy to access.
+
+```{python}
+full_barttorvik = pd.read_csv("../data/cbb.csv")
+
+values_to_change = ["Champions", "2ND", "F4", "E8", "S16", "R32", "R64", "N/A"]
+new_values = [7, 6, 5, 4, 3, 2, 1, 0]
+
+full_barttorvik["POSTSEASON"] = full_barttorvik["POSTSEASON"].replace(values_to_change, new_values)
+
+full_barttorvik["SEED"].fillna(17, inplace=True)
+full_barttorvik["POSTSEASON"].fillna(0, inplace=True)
+
+for year in range(2013, 2024):
+    filtered_data = full_barttorvik[full_barttorvik['YEAR'] == year]
+    full_barttorvik.loc[full_barttorvik['YEAR'] == year, 'YearOffenseRank'] = filtered_data['ADJOE'].rank(ascending=False).astype(int)
+    full_barttorvik.loc[full_barttorvik['YEAR'] == year, 'YearDefenseRank'] = filtered_data['ADJDE'].rank(ascending=True).astype(int)
+
+full_barttorvik['TotalOffenseRank'] = full_barttorvik['ADJOE'].rank(ascending=False).astype(int)
+full_barttorvik['TotalDefenseRank'] = full_barttorvik['ADJDE'].rank(ascending=True).astype(int)
+
+full_barttorvik["POSTSEASON"] = pd.to_numeric(full_barttorvik["POSTSEASON"], errors='coerce')
+full_barttorvik["POSTSEASON"].replace('', pd.NA, inplace=True)
+full_barttorvik["Made_Tournament"] = full_barttorvik["POSTSEASON"].apply(lambda x: 1 if 1<= x <= 7 else 0)
+
+full_barttorvik.to_csv("../data/cbb.csv", index=False)
+
+```
+
+I also sourced a dataset that contains the same information as the 2023 BartTorvik data, but contains all team records since 2013. This more expansive dataset will be helpful in creating a more thorough analysis. With this dataset, I edited the POSTSEASON column to reflect how many NCAA Tournament rounds a team experienced. A team that didn't make the tournament would receive a value of 0, while a team that won the National Championship by winning 6 tournament games would receive a value of 7.
+
+I also ranked each team's offensive and defensive efficiencies by year as this was something this dataset was lacking. I then resaved it for later use.
+
+### Accessing *KenPom's NCAA Data* Using Python
+
+The other major college basketball site for advanced team statistics is KenPom. KenPom has their own ranking methodology, similar to Barttorvik. While many of their advanced stats are similar, they are markedly different and each worth exploring in their own right. The site can be viewed [here](https://kenpom.com/).
+
+While KenPom's homepage is free to view, accessing their full data requires a \$20 annual subscription. I have this subscription, which allows me to download the site's data sets and import them into Pandas in a similar way to the Barttorvik data.
+
+As a side note, there is a "hoopR" package that is supposedly able to pull from the KenPom website directly with subscription credentials. I spent a few hours trying to figure out how to get it to work and unfortunately have had no luck. I may try to revisit this method down the line. I included my initial exploration of the package below.
+
+```{r}
+#| echo: false
+library(hoopR)
+
+user_email <- Sys.getenv("KP_USER")
+user_pw <- Sys.getenv("KP_PW")
+
+has_kp_user_and_pw()
+```
+
+```{python}
+kenpom_df = pd.read_csv("../data/summary23.csv")
+
+print(kenpom_df.head())
+```
+
+KenPom only provides 16 different features for their main data set, but having the subscription provides access to individual team pages and data, allowing for more in-depth information.
+
+### 

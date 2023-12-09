@@ -14,23 +14,21 @@ website:
         text: Introduction
       - href: https://github.com/anly501/dsan-5000-project-dominicvogel
         text: Code
-      - href: data/data.qmd
-        text: Data
       - href: data_gathering/data_gathering.qmd
         text: Data Gathering
       - href: data_cleaning/data_cleaning.qmd
         text: Data Cleaning
-      - href: eda/eda.ipynb
+      - href: eda/eda.qmd
         text: Data Exploration
+      - href: naive_bayes/naive_bayes.qmd
+        test: Naive Bayes
       - href: clustering/clustering.qmd
         text: Clustering
       - href: dimensionality_reduction/dimensionality_reduction.qmd
         text: Dimensionality Reduction
       - href: decision_trees/decision_trees.qmd
         text: Decision Trees
-      - href: arm/arm.qmd
-        text: ARM
-      - href: conclusions.qmd
+      - href: conclusion/conclusions.qmd
         text: Conclusions
 format:
   html:

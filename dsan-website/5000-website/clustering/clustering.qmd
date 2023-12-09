@@ -1,5 +1,339 @@
 ---
 title: "Clustering"
+format:
+  html:
+    code-fold: true
+    toc: true
+    code-summary: "Show Code"
 ---
 
-Build out your website tab for "clustering"
+# Data Clustering
+
+### Introduction to Clustering
+
+Aftering incorporating dimensionality reduction on the last page, it is now time to look further into clusters that appear within the data. While the way I have been looking at the data to this point has been rather binary (a team either made or missed the tournament), there are many possible ways to cluster the data. There is no single optimal clustering selection method, so I plan to try out a few different ones in this section. I will be using the same feature set of my NCAA data that I used on the dimensionality reduction page. That data was saved from before and will be reimported below.
+
+#### Imports and Dataset
+
+```{python}
+import warnings
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import plotly.express as px
+import sklearn
+from sklearn.cluster import KMeans, AgglomerativeClustering, DBSCAN
+from sklearn.metrics import silhouette_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from scipy.cluster.hierarchy import dendrogram, linkage
+
+bart = pd.read_csv('../data/bart_dimensionality.csv')
+remove_target = ['Made_Tournament']
+bart_target = bart.copy()
+bart.drop(columns= remove_target, inplace=True)
+```
+
+As always, pandas and the plotting libraries need to be imported. sklearn will be used to implement our different clustering methods. Lastly, the scipy packag will be used to visualize our agglomerative clustering results. This time, we will be using the feature set that was used for our dimensionality reduction tab.
+
+## K-Means Clustering
+
+#### Background
+
+K-Means clustering is an unsupervised clustering method that aims to group data points into 'k' amount of clusters. In this context, 'k' represents a user specified parameter, meaning that it's ultimately up to me to decide how many clusters I want to incorporate. To decide on this value 'k', there are a few different methods that can be used, such as the elbow method and analyzing silhouette scores.
+
+K-Means clustering seeks to optimize the sum of the squared distances between data points and their cluster mean. Each cluster starts with a randomly initialized centroid. Through iteration, new data points are assigned to the closest centroid and the centroids are updated based off of the mean of their assigned points. Eventually, the centroids converge and stabilize, resulting in the finished product.
+
+K-Means is efficient computationally, which helps when there is a large feature and dataset. It also is easily interpretable, allowing us to better discover patterns within the data.
+
+To start, I once again standardized the data. From there, I decided to test out a range of 2 to 10 clusters to determine which will be best for our analysis.
+
+```{python}
+warnings.filterwarnings('ignore')
+
+scaler = StandardScaler()
+bart_standardized = scaler.fit_transform(bart)
+
+clusters = list(range(2, 11))
+inertia = []
+distortion_val = []
+silhouette_scores = []
+
+for c in clusters:
+    kmeans = KMeans(n_clusters=c)
+    kmeans.fit(bart_standardized)
+    distortion = sum(np.min(kmeans.transform(bart_standardized), axis=1)) / bart_standardized.shape[0]
+    distortion_val.append(distortion)
+    inertia.append(kmeans.inertia_)
+    silhouette_scores.append(silhouette_score(bart_standardized, kmeans.labels_))
+
+results_df = pd.DataFrame({"Cluster": clusters, "Distortion": distortion_val, "Inertia": inertia, 'Silhouette Score': silhouette_scores})
+
+print(results_df)
+```
+
+From this, we are able to view our distortion, inertia, and silhouette scores for each of our nine attempted cluster sizes. The results are plotted and analyzed below.
+
+```{python}
+#| output: false
+plt.figure(figsize=(8, 5))
+plt.plot(results_df['Cluster'], results_df['Distortion'], marker='o')
+plt.title('Distortion')
+plt.xlabel('Number of Clusters')
+plt.ylabel('Distortion')
+plt.show()
+```
+
+![](images/distortion.png)
+
+As seen above, we plotted the distortion score for each number of clusters. Usually, the goal is to identify an "elbow point" within our data, where the rate of decrease sharply changes. To me, it looks like the elbow point might be at 4, but it isn't particularly convincing. Let's analyze further and see what happens when we do the same plot for inertia.
+
+```{python}
+#| output: false
+plt.figure(figsize=(8, 5))
+plt.plot(results_df['Cluster'], results_df['Inertia'], marker='o', color='orange')
+plt.title('Inertia')
+plt.xlabel('Number of Clusters')
+plt.ylabel('Inertia')
+plt.show()
+```
+
+![](images/inertia.png)
+
+When looking at inertia, we once again look for this elbow point. To me, it seems like 4 is our best guess at where the elbow point would lie, but the rate of change is relatively constant throughout. Because of this, I want to lastly plot the silhouette scores to determine my optimal number of clusters.
+
+```{python}
+#| output: false
+plt.figure(figsize=(8, 5))
+plt.plot(results_df['Cluster'], results_df['Silhouette Score'], marker='o', color='green')
+plt.title('Silhouette Score')
+plt.xlabel('Number of Clusters')
+plt.ylabel('Silhouette Score')
+plt.show()
+```
+
+![](images/silhouette.png)
+
+After plotting the silhouette score across different numbers of clusters, we notice something interesting. The silhouette score is a metric that quantifies how well separated the clusters are. Ideally, we want to choose the number of clusters that maximize this silhouette score. From our plot, it becomes clear that 2 clusters results in the highest silhouette score by a considerable margin. Because of this, we will choose 2 clusters for our K-Means analysis.
+
+```{python}
+#| output: false
+pca_components = pd.read_csv("../data/pca_components.csv")
+
+pca = PCA(n_components=3)
+bart_pca = pca.fit_transform(bart_standardized)
+components = pca.components_
+
+kmean = KMeans(n_clusters=2, random_state=101)
+kmean.fit(bart_standardized)
+labels = kmean.labels_
+
+pca_df = pd.DataFrame(data=bart_pca, columns=['PCA1', 'PCA2', 'PCA3'])
+pca_df['Cluster'] = labels
+
+plt.figure(figsize=(10, 6))
+
+sns.scatterplot(x='PCA1', y='PCA2', hue='Cluster', data=pca_df, palette='viridis', edgecolor='w', s=80)
+plt.title('K-Means Clusters in PCA Space (First Two Components)')
+plt.xlabel('PCA Component 1')
+plt.ylabel('PCA Component 2')
+plt.show()
+```
+
+![](images/kmeans.png)
+
+After running K-Means clustering with a 'k' of 2, I decided to plot our clusters against the first two principal components. When doing PCA on the last tab, I saved a file with the linear combinations for each of the first two principal components. Now, when applying those linear combinations to each data point and classifying them with their K-Means cluster number, we can see this result. The first principal component seems to do a pretty efficient job of clustering our data, as the clusters are almost entirely divided down the x-axis.
+
+```{python}
+pca_df['Cluster'] = pca_df['Cluster'].astype(str)
+
+fig = px.scatter_3d(pca_df, x='PCA1', y='PCA2', z='PCA3', color='Cluster', symbol='Cluster', opacity=0.7, size_max=10, title='3D Scatter Plot of PC1, PC2, and PC3 with Cluster Labels', labels={'0': 'Principal Component 1 (PC1)', '1': 'Principal Component 2 (PC2)','2': 'Principal Component 3 (PC3)', 'color': 'Cluster'}, color_discrete_sequence=['blue', 'green'])
+
+fig.update_layout(scene=dict(annotations=[dict(x=0, y=0, z=0, text='Cluster', showarrow=False)]))
+fig.update_layout(scene=dict(xaxis=dict(title_font=dict(size=16)),
+                             yaxis=dict(title_font=dict(size=16)),
+                             zaxis=dict(title_font=dict(size=16))))
+
+fig.show()
+```
+
+Here, I decided to include the third principal component and run the same analysis. Obviously, the first principal component remains dominant in determining cluster, but it is still cool to visualize the data in this way.
+
+```{python}
+optimal_k = 2
+
+kmeans = KMeans(n_clusters=optimal_k, random_state=101)
+labels = kmeans.fit_predict(bart_standardized)
+
+bart_with_clusters = bart_target.copy()
+bart_with_clusters['Cluster'] = labels
+bart_with_clusters['Cluster'] = 1 - bart_with_clusters['Cluster'] 
+
+alignment_count = bart_with_clusters.groupby(['Cluster', 'Made_Tournament']).size().reset_index(name='Count')
+
+misalignment_counts = alignment_count[alignment_count['Cluster'] == alignment_count['Made_Tournament']]
+alignment_counts = alignment_count[alignment_count['Cluster'] != alignment_count['Made_Tournament']]
+
+print("Counts for alignment:")
+print(alignment_counts)
+
+print("\nCounts for misalignment:")
+print(misalignment_counts)
+
+```
+
+Next, I wanted to see how closely our clustering resembled our Made Tournament column. The results here are interesting. 618 out of the 640 tournament teams in our dataset ended up in the same cluster (cluster 0). However, that cluster also contained 1071 teams that didn't make the tournament. This makes sense to me as there really is no hard cutoff for tournament caliber teams and ones that are on the outside looking in. Most years results are fluid, and the last 10 or so teams that make it in could easily be exchanged for the next 10 or so that barely miss the cut. Our clustering algorithm wasn't given specific numbers of points to put in each cluster, and because of this, the size of each cluster looks relatively similar (1689 for cluster 0 and 1834 for cluster 1). Considering only \~18% of our dataset made the tournament, there is a misalignment in sheer size.
+
+```{python}
+#| output: false
+
+plt.figure(figsize=(10, 6))
+plt.bar(alignment_counts['Cluster'].astype(str) + '_' + alignment_counts['Made_Tournament'].astype(str), alignment_counts['Count'], color='green', label='Alignment')
+
+plt.bar(misalignment_counts['Cluster'].astype(str) + '_' + misalignment_counts['Made_Tournament'].astype(str), misalignment_counts['Count'], color='red', label='Misalignment')
+
+plt.xlabel('Cluster_Made_Tournament')
+plt.ylabel('Count')
+plt.title('Alignment and Misalignment Counts')
+plt.legend()
+plt.show()
+```
+
+![](images/misalignment.png)
+
+This is just a further visualization of what was discussed above. This bar chart does a good job of conveying that there were very few tournament teams (22 out of 640, \~3.4%) that were classified as cluster 1.
+
+## DBSCAN
+
+#### Background
+
+Density-Based Spatial Clustering of Applications with Noise (DBSCAN) is another clustering algorithm that seeks to find patterns of similarities within the data. DBSCAN differs from K-Means as it doesn't require us to specify the number of clusters we want in advance.
+
+DBSCAN categorizes points into one of three categories: core points, border points, and noise points. Core points sit at, as the name suggests, the core of each cluster. They have a number of neighbors within a specified radius. Border points are in proximity to these core points but do not share the same density of points around them as core points do. Noise points are isolated points that aren't classified as being part of any particular cluster.
+
+DBSCAN, because of these noise points, does a great job at handling outliers effectively. Since points do not have to be forced into a particular cluster, the clusters that are formed are often more compact. DBSCAN has two parameters- epsilon and minimum samples. Epsilon determines how far apart two points can be to remain in the same cluster. Minimum samples determines how many points need to be in a cluster for it to be designated as its own cluster.
+
+To start, I looped through a range of epsilon values and minimum samples to determine which parameters led to the optimal silhouette score.
+
+```{python}
+#| output: false
+best_scores = []
+epsilons = []
+best_clusters = []
+
+eps_range = [i / 10 for i in range(25, 45)] 
+min_samples_range = range(2, 10)
+
+for i in eps_range:
+    max_score = -1
+    best_cluster = -1
+    best_eps = -1
+    for j in min_samples_range:
+        model = DBSCAN(eps=i, min_samples=j)
+        predictions = model.fit_predict(bart_standardized)
+        num_clusters = len(set(predictions)) - (1 if -1 in predictions else 0)
+        if num_clusters > 1: 
+            score = silhouette_score(bart_standardized, predictions)
+            if score > max_score:
+                max_score = score
+                best_cluster = num_clusters
+                best_eps = i
+
+    best_scores.append(max_score)
+    best_clusters.append(best_cluster)
+    epsilons.append(best_eps)
+
+db_df = pd.DataFrame({'Epsilons': epsilons, 'Best_Clusters': best_clusters, 'Silhouette_Score': best_scores})
+db_df = db_df[(db_df['Best_Clusters'] != -1) & (db_df['Silhouette_Score'] != -1)]
+
+plt.figure()
+sns.lineplot(data=db_df, x="Best_Clusters", y="Silhouette_Score")
+plt.title('Silhouette Score vs. Best Clusters (DBSCAN)')
+plt.xlabel('Best Number of Clusters')
+plt.ylabel('Silhouette Score')
+plt.show()
+```
+
+![](images/silhouetteclusters.png)
+
+From these results, it once again seems like our silhouette score is maximized with 2 clusters. Looping through only the epsilon parameters of 2.5 to 4.5 seemed like a weird choice, but that range was found via trial and error. If the epsilon parameters are any lower, the silhouette scores quickly become negative, as our dataset has enough features and variance that most points become classified as outliers. For this reason, we need to increase the maximum distance allowed for two points, resulting in this analysis.
+
+```{python}
+print(db_df.sort_values(by="Silhouette_Score", ascending=False).head())
+```
+
+From this, we can see that all five of the maximum silhouette scores came from 2 clusters.
+
+```{python}
+max_silhouette_score = db_df['Silhouette_Score'].max()
+max_silhouette_row_index = db_df['Silhouette_Score'].idxmax()
+max_silhouette_row = db_df.loc[max_silhouette_row_index]
+
+print("Maximum Silhouette Score:", max_silhouette_score)
+```
+
+Here, our maximum silhouette score via the DBSCAN method is 0.28.
+
+## Hierarchical/Agglomerative Clustering
+
+#### Background
+
+Hierarchical clustering is a clustering method that seeks to group data points into a hierarchical structure based on similarity. Hierarchical clustering does not require a predefined number of clusters, but instead produces a dendogram which shows a visual representation of the data's relationship amongst itself.
+
+Hierarchical clustering begins by treating each datapoint as its own, individual cluster. By iterating through the process, the algorithm begins to merge the most similar of these clusters, continuing to do so until there is one singular cluster with all of the datapoints. Inputs can vary based on different linkage and affinity criteria. To start, I will use Ward linkage, which seeks to minimize the variance between clusters. The affinity parameter determines how this distance is measured. I will be using Euclidean distance.
+
+Hierarchical clustering is especially beneficial at revealing nested structures that may be present within the data. Because of this, it is easy to visualize different clusters at different scales. Depending on how many clusters one might want to use, it's easy to see the divisions of these clusters when looking at the dendogram.
+
+```{python}
+num_clusters = 2
+
+hierarchical_cluster = AgglomerativeClustering(n_clusters= num_clusters, affinity='euclidean', linkage='ward') 
+labels = hierarchical_cluster.fit_predict(bart_standardized)
+print("Cluster Labels total:")
+print(list(set(labels)))
+```
+
+To begin, I input the number of clusters as 2. This number of clusters will be used to label the leaves of the dendogram generated below.
+
+```{python}
+#| output: false
+linkage_matrix = linkage(bart_standardized, method='ward')
+
+plt.figure(figsize=(10, 5))
+dendrogram(linkage_matrix, orientation='top', labels=labels, distance_sort='ascending', show_leaf_counts=True)
+plt.show()
+```
+
+![](images/hierarchical.png)
+
+From the dendogram, we can see the hierarchical distinction between our two clusters. Cluster 1 looks to be considerably larger than cluster 0.
+
+```{python}
+#| output: false
+silhouette_scores = []
+
+for n_clusters in range(2, 11):
+    hierarchical_cluster = AgglomerativeClustering(n_clusters=n_clusters, affinity='euclidean', linkage='ward')
+    labels = hierarchical_cluster.fit_predict(bart_standardized)
+
+    if len(set(labels)) > 1:
+        score = silhouette_score(bart_standardized, labels)
+        silhouette_scores.append({"Number of Clusters": n_clusters, "Silhouette Score": score})
+
+silhouette_df = pd.DataFrame(silhouette_scores)
+plt.figure(figsize=(10, 6))
+sns.lineplot(data=silhouette_df, x="Number of Clusters", y="Silhouette Score", marker="o")
+plt.title('Silhouette Score vs. Number of Clusters (Agglomerative Clustering)')
+plt.xlabel('Number of Clusters')
+plt.ylabel('Silhouette Score')
+plt.show()
+```
+
+![](images/silhouett3.png)
+
+While the first dendogram assumed two clusters was the ideal (as it was for K-Means and DBSCAN), I wanted to determine from the hierarchical silhouette score method if it determined 2 clusters was ideal for my dataset as well. After looping through the range of 2 to 10 clusters, it becomes pretty clear from the plot that the silhouette score is maximized at a cluster size of 2.
+
+### Conclusions
+
+If this page taught us one thing, it would be that there seem to be two distinct clusters within our dataset. Each method disagrees to an extent about which specific points are in which cluster, but the size of two being optimal remains constant. While clustering is not a supervised learning method, I did want to see how closely the clusters aligned with which teams actually made the tournament. From the K-Means method, we were able to determine that our clustering does a good job at determining which teams have a shot to make the tournament. However, the boundary of where to separate the cluster is the big distinction. When splitting teams into 2 clusters, it seems clear that one of them is going to contain the majority of the more successful teams. However, that cluster seems to blend many more teams in with them too, implying that the boundary between tournament quality team and non-tournament quality team is blurry.

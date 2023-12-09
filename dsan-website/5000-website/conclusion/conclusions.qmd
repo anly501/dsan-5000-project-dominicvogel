@@ -1,0 +1,52 @@
+---
+title: "Conclusions"
+format:
+  html:
+    code-fold: true
+    toc: true
+    code-summary: "Show Code"
+---
+
+![](images/looneytunes.jpg)
+
+## Can We Predict Which Teams Make The NCAA Tournament?
+
+Going into this project, my goal was to try to figure out how well we could predict which teams would be among the 68 selected each year to participate in the NCAA Men's Basketball Tournament. So, how did I do? I'll recap my findings from each aspect of this project and then leave you to decide.
+
+### Data Gathering
+
+Due to the different requirements of the project, I used a few different sources of data. The first was the usage of BartTorvik's historical college basketball dataset. This dataset contained every division 1 team since 2013 (besides 2020), giving us plenty of information about their metrics and performance. All of this information is readily available and easily downloadable from BartTorvik's website.
+
+Next, I sourced scraped text data from the ncaahoopR package. This allowed me to get play by play data for each of Creighton's 37 games played in the 2022-23 season. While this data didn't necessarily tie in to my overall research question, Creighton is my favorite team and it was cool to analyze.
+
+If I could have got the hoopR package to work, I would have also incorporated KenPom data into my analysis. KenPom is very similar to BartTorvik in terms of metrics provided, so it would have been interesting to see which site does a better job.
+
+### Data Cleaning
+
+Luckily for me, there wasn't a whole lot to clean. The datasets imported relatively cleanly so outside of choosing which columns I wanted to keep and renaming a few of them, there wasn't much for me to do. This is probably the step I was dreading the most so I'm immensely grateful I could get my hands on clean data.
+
+### Exploratory Data Analysis
+
+Here, I started to dig a bit deeper into the data provided. My favorite visualization produced was probably the percentage of teams from each conference who have made the tournament over the last decade. While some conferences only get their auto qualifier each year, the Big 12 has sent 65% of their teams over the last decade to the tournament. The correlation matrices also provided good insight and reaffirmed that BartTorvik's in-house BARTTHAG rating has a strong relationship to tournament performance.
+
+### Naive Bayes/Dimensionality Reduction/Clustering
+
+In these tabs, I finally started the modeling process. For Naive Bayes, the optimal feature set for tournament classification included Wins Above Bubble, BARTTHAG rating, and total wins. These columns, as we ended up seeing throughout the project, were kind of a cheat code in terms of creating accurate models. However, when attempting Naive Bayes on my Creighton text data, I hit a wall. Even when finding the optimal text feature set, the classifier would always guess that Creighton wouldn't score on each play. This taught me a lot about the limitations of modeling, especially considering I didn't have the computing power to iterate over a huge feature set. Further, it showed that accuracy score was not always a great metric. Our Creighton Naive Bayes model had \>80% accuracy, but that was only because Creighton scored on very few of the plays.
+
+In the dimensionality reduction tab, it was cool to see the linear combinations that explained the most variance. PCA's results seemed fairly intuitive, and when mapping our classifier of tournament teams onto the principal components, there was clear overlap.
+
+For clustering, each method resulted in selecting 2 optimal clusters. This was interesting to me, but allowed for me to see if the 2 clusters from each method had good overlap with one another as well as the "Made Tournament" classifier. From the K-Means method, we were able to see that nearly all tournament teams in the dataset (618/640) were clustered together.
+
+### Decision Trees
+
+Lastly, I produced two different decision trees from my dataset. Again, I set the classifier to be making the tournament, and sought to see how well a decision tree could create this classification prediction. On the first iteration, it performed incredibly well, despite deciding on its classification after a single split. The common theme throughout the project was that WAB and BARTTHAG were too powerful in terms of classification and prevented us from seeing the underlying traits that make a team successful. By simply splitting teams by if they had more or less than 0.15 Wins Above the Bubble, our first tree achieved 93% accuracy.
+
+To refine this process, I removed those columns as to give the algorithm more of a challenge. On the second go around, the max_depth parameter was increased to 4 and from this we were able to discern information that was probably more interesting. Offensive Efficiency ranking seems to play a big role in a team's success, but a high OE alone isn't enough to give a team a tournament birth. Things like low turnover rates, high effective field goal percentage, and a great defense also contributed to this classification.
+
+### Next Steps/Wrapping Up:
+
+While I didn't uncover anything in this project that is going to change the world of college basketball, I had a lot of fun applying these different techniques to the dataset. For most of these modeling tasks, this was my first time attempting them, and by trying them on a dataset I'm familiar with and interested in, I felt as though I was able to learn a lot more. If I were to do it over again, I would probably remove all teams who qualified by winning their conference tournaments from the dataset. This would mean that our classification tasks would only focus on the 36 at-large qualifiers each year. I think it would lend itself to some interesting results as the teams that often lowered our accuracy scores were the automatic qualifiers from small conferences, who would have no shot at getting into the tournament without the auto bid. Maybe someday I'll revisit this project with that idea in mind. Until then, I'm really happy with the way this turned out and am glad that I have something tangible to show for my first semester in the program. Day-to-day (or even week-to-week) I often struggle to feel the progression of my learning, but it's really cool to look back and know that even 15 weeks ago, I would have had almost no clue how to do most of this project. I'm thankful for a great first semester and am excited to continue learning in the spring!
+
+Best,
+
+Dominic

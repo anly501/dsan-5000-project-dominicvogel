@@ -1,5 +1,209 @@
 ---
 title: "Dimensionality Reduction"
-format: html
+format:
+  html:
+    code-fold: true
+    toc: true
+    code-summary: "Show Code"
 ---
 
+# Dimensionality Reduction
+
+### Introduction to Dimensionality Reduction
+
+On this tab, I will introduce the concept of dimensionality reduction and apply it to my NCAA Team dataset. Dimensionality reduction is a machine learning technique that seeks to reduced the number of features within a dataset while retaining as much of the important information as possible. I will use two different techniques: **Principal Component Analysis (PCA)** and **t-Distributed Stochastic Neighbor Embedding (t-SNE).** PCA is a linear dimensionality reduction technique which seeks to retain the linear combinations of features that explain the most variance within the data. t-SNE is non-linear and focuses on preserving pairwise similarities between data points.
+
+#### Imports and Dataset
+
+```{python}
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+import plotly.express as px
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import LabelEncoder
+from sklearn.manifold import TSNE
+
+bart = pd.read_csv("../data/cbb.csv")
+```
+
+Per usual, we will use pandas to import our BartTorvik dataset. matplotlib and plotly are used for visualizations of our dimensionality reductions, with the sklearn package allows us to actually run these techniques.
+
+```{python}
+bart['CONF'] = pd.Categorical(bart['CONF'])
+bart['CONF'] = bart['CONF'].cat.codes
+to_drop = ["POSTSEASON", "SEED", "TEAM", "ADJOE", "ADJDE", "TotalOffenseRank", "TotalDefenseRank", "TotalRank", "YearRank", "YEAR"]
+bart= bart.drop(columns= to_drop)
+bart.to_csv("../data/bart_dimensionality.csv", index=False)
+```
+
+Before performing any dimensionality reduction, I first dropped columns that I deemed to not perfectly explain our data. "POSTSEASON" and "SEED" have perfect overlap with the Made Tournament column, as teams that didn't make the tournament all share the same value in each column. The Conference column was label encoded, so it can be expressed in a linear combination. Lastly, I dropped ADJOE, ADJDE, and the TotalRanks based off of these efficiences as they are not meant to be compared across years. Instead, I retained the YearRank columns for both ADJOE and ADJDE.
+
+### Principal Component Analysis (PCA)
+
+```{python}
+scaler = StandardScaler()
+
+bart_standardized = scaler.fit_transform(bart)
+```
+
+To begin the PCA process, I first standardized each column as to have a mean of 0 and a standard deviation of 1.
+
+```{python}
+covariance_matrix = np.cov(bart_standardized, rowvar= False)
+```
+
+Here, our covarience matrix was constructed. Since the dataset still has a lot of features (even after dropping quite a few), the covariance matrix is quite large.
+
+```{python}
+eigenvalues, eigenvectors = np.linalg.eig(covariance_matrix)
+print("Eigenvalues\n","----------------------")
+print(eigenvalues)
+```
+
+Eigenvalues and Eigenvectors were then generated, as to help with our dimensionality reduction. The eigenvectors represent directions within the feature space while the eigenvalues represent the magnitudes of those directions.
+
+```{python}
+index_sort = np.argsort(eigenvalues)[::-1]
+eigenvalue_sort = eigenvalues[index_sort]
+```
+
+```{python}
+cumulative_explained_variance = np.cumsum(eigenvalue_sort) / sum(eigenvalue_sort)
+desired_variance = 0.8
+num_components = np.argmax(cumulative_explained_variance >= desired_variance) + 1
+print(f"Number of components to capture {desired_variance * 100}% variance: {num_components}")
+pca = PCA(n_components=num_components)
+bart_pca = pca.fit_transform(bart_standardized)
+components = pca.components_
+```
+
+After sorting the eigenvalues, we are then able to determine which linear combinations of features explain the most about our dataset's variance. I set the threshold for explained variance to be 80%. This number turned out to be 8, meaning that our top 8 principal components explain over 80% of our total variance. After this, these 8 components are used to fit the PCA model.
+
+```{python}
+components_df = pd.DataFrame(components, columns=bart.columns)
+components_df.head()
+components_df.to_csv("../data/pca_components.csv", index=False)
+```
+
+Here, I created a dataset that takes each of the 8 components fit to the PCA model, and shows us the makeup of each linear combination. This will be looked deeper into later on this page.
+
+```{python}
+#| output: false
+plt.figure()
+plt.plot(range(1, len(cumulative_explained_variance) + 1), cumulative_explained_variance, marker='o', color='#612bd4')
+plt.title('Cumulative Explained Variance')
+plt.xlabel('Number of Principal Components')
+plt.ylabel('Cumulative Explained Variance')
+plt.show()
+```
+
+![](images/cumexp.png)
+
+Here, we are able to see how much of the variance in our dataset is explained by adding a specific number of principal components. As you can see, we cross the 80% threshold with 8 components, and it seems like using 12 components would have been right at about the 90% threshold.
+
+```{python}
+explained_variance_ratio = pca.explained_variance_ratio_
+print("Explained Variance Ratio for Each Component:")
+print(explained_variance_ratio)
+```
+
+By printing the explained variance ratios, we can see how much each individual component added to our total explained variance. Our first principal component explained 35% of the total variance in our dataset, while the eighth explained 3.6%.
+
+```{python}
+#| output: false
+plt.figure()
+plt.bar(range(1, len(explained_variance_ratio) + 1), explained_variance_ratio, color='#FFB6C1')
+plt.title('Plot of Principal Components and Explained Variance')
+plt.xlabel('Principal Components')
+plt.ylabel('Explained Variance Ratio')
+plt.show()
+```
+
+![](images/pca.png)
+
+This further visualizes the difference in explained variance between each of our 8 components.
+
+```{python}
+#| output: false
+colors = ['blue', 'red']
+cmap = ListedColormap(colors)
+
+plt.figure()
+scatter = plt.scatter(bart_pca[:, 0], bart_pca[:, 1], c=bart['Made_Tournament'], cmap=cmap, alpha=0.6)
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.title('Scatter Plot of PCA Components')
+cbar = plt.colorbar(scatter, ticks=[0, 1], label='Made Tournament') 
+cbar.set_ticklabels(['No', 'Yes']) 
+plt.show()
+```
+
+![](images/scatter.png)
+
+Here, I decided to plot each of our datapoints across the first two principal components, and then color them by whether or not a team ended up making the tournament. As you can see, the first principal component does most of the heavy lifting, as the X-Axis does a much better job at classifying the two. Further, since principal component one has the most variance, the range of values is wider, as we can see by the scales on the axes.
+
+```{python}
+#| output: false
+weights_first_pc = components_df.iloc[0]
+
+# Sort the weights in descending order
+sorted_weights = weights_first_pc.sort_values(ascending=False)
+
+# Plot the bar chart with adjusted figure size and rotated x-axis labels
+plt.figure(figsize=(7, 4))  # Adjust the figure size as needed
+ax = sorted_weights.plot(kind='bar', color='blue', alpha=0.7)
+plt.xlabel('Feature')
+plt.ylabel('Weight in First Principal Component')
+plt.title('Weights of Features in First Principal Component')
+ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right', fontsize=8)  # Set fontsize for x-axis labels
+plt.tight_layout()  # Adjust layout for better spacing
+plt.show()
+
+```
+
+![](images/weights.png)
+
+In this graph, I decided to visualize how much weight each of our features has in the first principal component. Clearly, the YearOffenseRank and YearDefenseRanks have a strong positive linear combination value. This is because a more optimal value for these would be lower (rank 1 is the best rank). From this, we can see that most of the values on the left side are our defensive metrics. Stronger defensive metrics are also classified by lower values. The inverse is true on the other side of our graph. For values that the best teams seek to maximize (Wins, BARTHAG, offensive metrics), they are given a negative linear combination value. From this, we can deduce that our best teams will have a low value on the first principal component. This tracks with our scatter plot above, where the teams that made the tournament were overwhelmingly on the left side of our plot.
+
+### t-Distributed Stochastic Neighbor Embedding (t-SNE)
+
+For my usage of t-SNE, I decided to remove the "Made Tournament" column from my dataset. I wanted to see if the remaining features captured within the BartTorvik data naturally sorted themselves into tournament and non-tournament teams. To do this, I used three different perplexity scores. A perplexity score measures the number of neighbors each data point considers during the dimensionality reduction process. A low perplexity may lead to finer grained clusters, while a higher perplexity may lead to analyzing the data on a more global scale. For this reason, I selected one high perplexity (50), one low perplexity (5), and one medium perplexity (30). My initial assumption is that the medium perplexity will create a Goldilocks situation where it hopefully fits just right.
+
+```{python}
+
+perplexities = [5, 30, 50]
+
+bart_numeric = bart.copy()
+bart_numeric['Made_NCAA_Tournament'] = bart_numeric['Made_Tournament'].map({1: 'Yes', 0: 'No'})
+
+for perplexity in perplexities:
+    tsne = TSNE(n_components=3, perplexity=perplexity, random_state=42)
+    bart_tsne = tsne.fit_transform(bart_numeric.drop(columns=['Made_NCAA_Tournament']))
+
+    fig = px.scatter_3d(x=bart_tsne[:, 0], y=bart_tsne[:, 1], z=bart_tsne[:, 2], color=bart_numeric['Made_NCAA_Tournament'],
+                        title=f'3D t-SNE Plot (Perplexity={perplexity})',
+                        color_discrete_map={'Yes': 'red', 'No': 'blue'},
+                        labels={'color': 'Made_NCAA_Tournament'})
+    
+    fig.update_layout(scene=dict(xaxis_title='Dimension 1', yaxis_title='Dimension 2', zaxis_title='Dimension 3')) 
+    fig.show()
+```
+
+From these three plots, we can begin to deduce a pattern. At the perplexity score of 5, our points are rather scattered. There are early semblances of a stricter form or pattern to our data, but it's harder to visualize. At a score of 30, our data takes on a shape with stricter form. It more clearly shows a separation between teams. The majority of teams colored as having made the tournament score high on the x-axis and z-axis. While other teams score high on one of these two axes, teams with high values in both overwhelmingly tended to make the tournament. At the score of 50, this shape was even more tight, best captured by the shape seen below.
+
+![](images/perplexity.png){width="232"}
+
+From this, we can see a clear distinction between teams who made the tournament (red) and teams who did not (blue).
+
+### Conclusion
+
+For both methods of dimensionality reduction, we were able to pretty accurately map whether or not a team made the tournament to the reduced dimensions. While dimensionality reduction isn't a classification technique, this goes to show that the variance of the other features in our data, when captured, does a a great job at determining which teams end up making the tournament.
+
+For PCA, we needed 8 components to explain 80% of the variance within our data. The first component did a lot of the heavy lifting, with 35% of the variance coming from it alone. Once again, it seems like our usual suspects (BARTHAG, WAB, W, and the offensive/defensive efficiency metrics) are the features that determine the most about a team.
+
+For t-SNE, we tried three different perplexities on our data. The perplexity scores of 30 and 50 show rather similar shapes, both of which seem to cluster the majority of top teams together. It is interesting to see the different patterns in the data that were picked up on.
+
+Going forward, I'm interested to see if dedicated clustering techniques do a similarly good job of defining the distinctions between teams in my dataset.

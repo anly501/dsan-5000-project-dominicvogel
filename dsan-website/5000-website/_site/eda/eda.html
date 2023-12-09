@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>DSAN-5000: Project - Data Exploration</title>
+<title>DSAN-5000: Project - Exploratory Data Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -93,6 +93,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script type="text/javascript">
+window.PlotlyConfig = {MathJaxConfig: 'local'};
+if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Config) {window.MathJax.Hub.Config({SVG: {font: "STIX-Web"}});}
+if (typeof require !== 'undefined') {
+require.undef("plotly");
+requirejs.config({
+    paths: {
+        'plotly': ['https://cdn.plot.ly/plotly-2.12.1.min']
+    }
+});
+require(['plotly'], function(Plotly) {
+    window._Plotly = Plotly;
+});
+}
+</script>
+
 
 
 </head>
@@ -131,10 +150,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Code</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../data/data.html" rel="" target="">
- <span class="menu-text">Data</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="../data_gathering/data_gathering.html" rel="" target="">
  <span class="menu-text">Data Gathering</span></a>
   </li>  
@@ -159,11 +174,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Decision Trees</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../arm/arm.html" rel="" target="">
- <span class="menu-text">ARM</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../conclusions.html" rel="" target="">
+    <a class="nav-link" href="../conclusion/conclusions.html" rel="" target="">
  <span class="menu-text">Conclusions</span></a>
   </li>  
 </ul>
@@ -182,8 +193,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#quick-look-at-the-data" id="toc-quick-look-at-the-data" class="nav-link active" data-scroll-target="#quick-look-at-the-data">Quick look at the data</a></li>
-  <li><a href="#basic-visualization" id="toc-basic-visualization" class="nav-link" data-scroll-target="#basic-visualization">Basic visualization</a></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link active" data-scroll-target="#exploratory-data-analysis">Exploratory Data Analysis</a>
+  <ul class="collapse">
+  <li><a href="#what-is-exploratory-data-analysis-eda" id="toc-what-is-exploratory-data-analysis-eda" class="nav-link" data-scroll-target="#what-is-exploratory-data-analysis-eda">What is Exploratory Data Analysis (EDA)?</a></li>
+  <li><a href="#summary-statistics" id="toc-summary-statistics" class="nav-link" data-scroll-target="#summary-statistics">Summary Statistics</a></li>
+  <li><a href="#visualization" id="toc-visualization" class="nav-link" data-scroll-target="#visualization">Visualization</a></li>
+  <li><a href="#correlation-analysis" id="toc-correlation-analysis" class="nav-link" data-scroll-target="#correlation-analysis">Correlation Analysis</a></li>
+  <li><a href="#hypothesis-generationmoving-forward" id="toc-hypothesis-generationmoving-forward" class="nav-link" data-scroll-target="#hypothesis-generationmoving-forward">Hypothesis Generation/Moving Forward</a></li>
+  <li><a href="#data-refiningoutlier-analysis" id="toc-data-refiningoutlier-analysis" class="nav-link" data-scroll-target="#data-refiningoutlier-analysis">Data Refining/Outlier Analysis</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -192,7 +211,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Data Exploration</h1>
+<h1 class="title">Exploratory Data Analysis</h1>
 </div>
 
 
@@ -207,56 +226,347 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<p>Build out your website tab for exploratory data analysis</p>
-<section id="quick-look-at-the-data" class="level2">
-<h2 class="anchored" data-anchor-id="quick-look-at-the-data">Quick look at the data</h2>
-<div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import seaborn</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<section id="exploratory-data-analysis" class="level1">
+<h1>Exploratory Data Analysis</h1>
+<p>Now that our data is clean and well organized, we can begin to explore certain trends within it. My end goal for this project is to better understand the factors that aid teams in selection for the NCAA Men’s Basketball Tournament.</p>
+<section id="what-is-exploratory-data-analysis-eda" class="level3">
+<h3 class="anchored" data-anchor-id="what-is-exploratory-data-analysis-eda">What is Exploratory Data Analysis (EDA)?</h3>
+<p>EDA is an important part of the data science life cycle. In order to begin to run any sort of modeling techniques, it’s necessary to have a deeper understanding of the actual data being presented. In this tab, I’ll dig deeper into the BartTorvik dataset which was introduced on the Data Gathering page. By looking at different aspects of the dataset (like sample statistics and variable correlation), it will make it easier to interpret the results found later in the project. All visualizations on this page should ideally be intuitive to any reader, regardless of whether or not they are familiar with college basketball.</p>
+<section id="imports-and-dataset" class="level4">
+<h4 class="anchored" data-anchor-id="imports-and-dataset">Imports and Dataset</h4>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the default theme</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>, palette<span class="op">=</span><span class="st">"pastel"</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Load an example dataset</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>tips <span class="op">=</span> sns.load_dataset(<span class="st">"tips"</span>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tips)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>     total_bill   tip     sex smoker   day    time  size
-0         16.99  1.01  Female     No   Sun  Dinner     2
-1         10.34  1.66    Male     No   Sun  Dinner     3
-2         21.01  3.50    Male     No   Sun  Dinner     3
-3         23.68  3.31    Male     No   Sun  Dinner     2
-4         24.59  3.61  Female     No   Sun  Dinner     4
-..          ...   ...     ...    ...   ...     ...   ...
-239       29.03  5.92    Male     No   Sat  Dinner     3
-240       27.18  2.00  Female    Yes   Sat  Dinner     2
-241       22.67  2.00    Male    Yes   Sat  Dinner     2
-242       17.82  1.75    Male     No   Sat  Dinner     2
-243       18.78  3.00  Female     No  Thur  Dinner     2
-
-[244 rows x 7 columns]</code></pre>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>full_barttorvik <span class="op">=</span> pd.read_csv(<span class="st">"../data/cbb.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
-</div>
+<p>This EDA page will involve a lot of visualization, for which the plotly, matplotlib, and seaborn packages are incredibly helpful. I will also continue to use pandas to analyze and reshape my data.</p>
 </section>
-<section id="basic-visualization" class="level2">
-<h2 class="anchored" data-anchor-id="basic-visualization">Basic visualization</h2>
+</section>
+<section id="summary-statistics" class="level3">
+<h3 class="anchored" data-anchor-id="summary-statistics">Summary Statistics</h3>
+<p>Above, we imported the packages necessary to manipulate and visualize the data on this tab. First, I thought it would be a good idea to view summary statistics about particular indicators I was interested in. I decided to select the 5 columns listed below:</p>
+<ul>
+<li><p><strong>Adjusted Offensive Efficiency (ADJOE)-</strong> this is a metric that seeks to quantify how efficient a specific team is at scoring the basketball. The specific calculations that go into this metric can be found <a href="http://adamcwisports.blogspot.com/p/every-possession-counts.html">here</a>. Essentially, it takes a team’s points per possession and adjusts them according to the quality of their opponent and venue. The average Division 1 team’s ADJOE usually comes out near 100, although this average differs by year.</p></li>
+<li><p><strong>Adjusted Defensive Efficiency (ADJDE)-</strong> this metric is the inverse of above, essentially quantifying how good a team is at preventing their opponents from scoring. Because it is a defensive metric, a lower ADJDE is preferable, as opposed to a high ADJOE being preferable. Once again, the average team usually hovers around an ADJDE of 100, although it also differs by year.</p></li>
+<li><p><strong>Three Point Percentage (3P_O)-</strong> this metric simply calculates a team’s three point percentage for the year. It tracks the number of three point shots made divided by total three point attempts.</p></li>
+<li><p><strong>Wins Above Bubble (WAB)-</strong> wins above bubble is a metric that seeks to quantify how good a team has performed from their schedule relative to a “bubble” team. In College Basketball, a bubble team typically refers to one of the Last Four In (last four teams to make the tournament) or First Four Out (first four teams left out of the tournament). There are 32 at large qualifier spots per year, meaning that the bubble usually encompasses the 29th-36th best at-large teams. This metric seeks to calculate, all things equal, how many more or fewer wins a team has attained compared to how the computer predicts an average bubble team would have performed with the same schedule. Because only 68 teams make the tournament each year (out of 350+), the mean WAB value will be significantly less than 0. Only the top ~50 or so teams for each given year will have a positive WAB.</p></li>
+<li><p><strong>Made Tournament-</strong> this column was added during the data gathering portion of this project. Each team that ended up making the tournament (whether through auto qualifying due to winning their Conference Tournament or being selected as one of the 32 best at-large teams) received a 1 in this column, while all teams who missed the tournament received a 0.</p></li>
+</ul>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>barthag <span class="op">=</span> full_barttorvik[<span class="st">"BARTHAG"</span>]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>columns <span class="op">=</span> [<span class="st">"ADJOE"</span>, <span class="st">"ADJDE"</span>, <span class="st">"3P_O"</span>, <span class="st">"WAB"</span>, <span class="st">"Made_Tournament"</span>]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>full_barttorvik[columns].describe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">ADJOE</th>
+<th data-quarto-table-cell-role="th">ADJDE</th>
+<th data-quarto-table-cell-role="th">3P_O</th>
+<th data-quarto-table-cell-role="th">WAB</th>
+<th data-quarto-table-cell-role="th">Made_Tournament</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">count</td>
+<td>3523.000000</td>
+<td>3523.000000</td>
+<td>3523.000000</td>
+<td>3523.000000</td>
+<td>3523.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">mean</td>
+<td>103.151320</td>
+<td>103.153250</td>
+<td>34.185580</td>
+<td>-7.579620</td>
+<td>0.181663</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">std</td>
+<td>7.264859</td>
+<td>6.511989</td>
+<td>2.729186</td>
+<td>6.815976</td>
+<td>0.385622</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">min</td>
+<td>76.600000</td>
+<td>84.000000</td>
+<td>24.900000</td>
+<td>-25.200000</td>
+<td>0.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">25%</td>
+<td>98.200000</td>
+<td>98.400000</td>
+<td>32.300000</td>
+<td>-12.600000</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">50%</td>
+<td>102.800000</td>
+<td>103.200000</td>
+<td>34.100000</td>
+<td>-7.900000</td>
+<td>0.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">75%</td>
+<td>107.900000</td>
+<td>107.800000</td>
+<td>36.000000</td>
+<td>-3.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">max</td>
+<td>129.100000</td>
+<td>124.000000</td>
+<td>44.100000</td>
+<td>13.100000</td>
+<td>1.000000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>After analyzing the summary statistics, we can start to learn a few things about the dataset. First, we have data on 3523 distinct team seasons over the last decade. The average ADJOE and ADJDE were both a bit higher than 100, but are relatively equal (which is important for consistency’s sake). The average team shot 34.1% from three point range, while the best shooting team over the last ten years shot a staggering 44.1% from three. Our assumptions for WAB track, with the 75th percentile team still being 3 wins below the bubble.</p>
+<p>Finally, 18.2% of our 3523 teams made the tournament (640). This is interesting and allowed me to make a new realization about the data. For the last decade, the tournament has had four games played before the official start of the tournament to reduce the field from 68 –&gt; 64. Since this dataset only classifies 64 of teams per year as officially making the tournament, teams that lose their play-in game are considered as having missed the tournament for analysis purposes.</p>
+</section>
+<section id="visualization" class="level3">
+<h3 class="anchored" data-anchor-id="visualization">Visualization</h3>
+<section id="efficiency-metrics-for-the-last-10-champions" class="level4">
+<h4 class="anchored" data-anchor-id="efficiency-metrics-for-the-last-10-champions">Efficiency Metrics For The Last 10 Champions</h4>
+<div class="cell" data-execution_count="3">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>filt1 <span class="op">=</span> full_barttorvik.loc[full_barttorvik[<span class="st">'POSTSEASON'</span>] <span class="op">==</span> <span class="dv">7</span>].copy()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>filt1[<span class="st">'Label'</span>] <span class="op">=</span> filt1[<span class="st">'TEAM'</span>] <span class="op">+</span> <span class="st">' '</span> <span class="op">+</span> filt1[<span class="st">'YEAR'</span>].astype(<span class="bu">str</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.scatter(</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    filt1,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">'ADJDE'</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">'ADJOE'</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    text<span class="op">=</span><span class="st">'Label'</span>, </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">'ADJDE vs ADJOE for Last 10 Champions'</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    labels<span class="op">=</span>{<span class="st">'ADJDE'</span>: <span class="st">'Adjusted Defensive Efficiency'</span>, <span class="st">'ADJOE'</span>: <span class="st">'Adjusted Offensive Efficiency'</span>},</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>fig.update_traces(</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    textposition<span class="op">=</span><span class="st">'top right'</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    mode<span class="op">=</span><span class="st">'text+markers'</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    marker<span class="op">=</span><span class="bu">dict</span>(size<span class="op">=</span><span class="dv">13</span>),</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    textfont<span class="op">=</span><span class="bu">dict</span>(size<span class="op">=</span><span class="dv">15</span>)  </span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>fig.update_layout(</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    margin<span class="op">=</span><span class="bu">dict</span>(l<span class="op">=</span><span class="dv">0</span>, r<span class="op">=</span><span class="dv">0</span>, t<span class="op">=</span><span class="dv">40</span>, b<span class="op">=</span><span class="dv">0</span>),</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">500</span>,</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    xaxis<span class="op">=</span><span class="bu">dict</span>(</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        tickmode<span class="op">=</span><span class="st">'linear'</span>, </span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>        dtick<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="bu">dict</span>(text<span class="op">=</span><span class="st">'Adjusted Defensive Efficiency'</span>, font<span class="op">=</span><span class="bu">dict</span>(size<span class="op">=</span><span class="dv">14</span>))</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    yaxis<span class="op">=</span><span class="bu">dict</span>(</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>        title<span class="op">=</span><span class="bu">dict</span>(text<span class="op">=</span><span class="st">'Adjusted Offensive Efficiency'</span>, font<span class="op">=</span><span class="bu">dict</span>(size<span class="op">=</span><span class="dv">14</span>))</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="bu">dict</span>(text<span class="op">=</span><span class="st">'ADJDE vs ADJOE for Last 10 Champions'</span>, font<span class="op">=</span><span class="bu">dict</span>(size<span class="op">=</span><span class="dv">24</span>))</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/newplot (2).png" class="img-fluid"></p>
+<p>In this plot, I decided to compare the offensive and defensive efficiencies of the ten NCAA Champion teams from the dataset. As mentioned before, a high ADJOE and a low ADJDE is the ideal combination. As such, we should expect a team that dominates both aspects to be in the top left quadrant. However, the top left quadrant is pretty bare.</p>
+<p>Instead, we can see that Louisville’s 2013 team had by far the best defensive metrics of any team on this list. In contrast, Villanova’s 2018 team and Baylor’s 2021 team were more offensive minded, having the two lowest defensive efficiencies and some of the highest offensive efficiencies.</p>
+<p>While this is a fun plot, we can’t deduce a ton of meaningful information. The playstyle of basketball has changed significantly over the last decade, meaning that it’s not possible to perfectly compare these metrics year over year. To combat this, I created <em>YearOffensiveRank</em> and <em>YearDefensiveRank</em> columns. These simply compute how a team ranked relative to others their same year (1 being the best). Since my project analysis revolves around which teams make the tournament each year and is not concerned with which teams were the best across years, strictly comparing a team’s ADJOE and ADJDE to their yearly peers is sufficient.</p>
+</section>
+<section id="three-point-percentage-by-year" class="level4">
+<h4 class="anchored" data-anchor-id="three-point-percentage-by-year">Three Point Percentage By Year</h4>
+<div class="cell" data-execution_count="4">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>average_3p_o_by_year <span class="op">=</span> full_barttorvik.groupby(<span class="st">'YEAR'</span>)[<span class="st">'3P_O'</span>].mean().reset_index()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>average_3p_o_by_year[<span class="st">'3P_O'</span>] <span class="op">=</span> pd.to_numeric(average_3p_o_by_year[<span class="st">'3P_O'</span>], errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>sns.barplot(x<span class="op">=</span><span class="st">'YEAR'</span>, y<span class="op">=</span><span class="st">'3P_O'</span>, data<span class="op">=</span>average_3p_o_by_year, hue <span class="op">=</span> <span class="st">'3P_O'</span>, legend<span class="op">=</span> <span class="va">False</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Average Team Three Point Percentage By Year'</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Year'</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Three Point Percentage'</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index, value <span class="kw">in</span> <span class="bu">enumerate</span>(average_3p_o_by_year[<span class="st">'3P_O'</span>]):</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    plt.text(index, value <span class="op">+</span> <span class="fl">0.1</span>, <span class="ss">f'</span><span class="sc">{</span>value<span class="sc">:.2f}</span><span class="ss">'</span>, ha<span class="op">=</span><span class="st">'center'</span>, va<span class="op">=</span><span class="st">'bottom'</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/3pt.png" class="img-fluid"></p>
+<p>Next, I wanted to examine how much the average team’s three point percentage has changed by year. Initially, I expected there to be a lot more variation. Basketball has become much more three point reliant over the last decade. However, that doesn’t seem to be reflected in our data. The average team’s three point percentage hovered between 33 and 35% each year. While teams have become more reliant on the three, they aren’t necessarily shooting it at a higher clip. This chart also presents an opportunity to talk about 2020’s omission from the dataset. Due to COVID, the 2020 NCAA Basketball Tournament was cancelled, meaning that we will not be using that year’s data as there was no selection show or tournament.</p>
+</section>
+<section id="barthag-distribution" class="level4">
+<h4 class="anchored" data-anchor-id="barthag-distribution">BARTHAG Distribution</h4>
+<div class="cell" data-execution_count="5">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>custom_colors <span class="op">=</span> sns.color_palette(<span class="st">"viridis"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>plt.figure()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>sns.histplot(full_barttorvik[<span class="st">'BARTHAG'</span>], bins<span class="op">=</span><span class="dv">20</span>, color<span class="op">=</span>custom_colors[<span class="dv">0</span>], edgecolor<span class="op">=</span><span class="st">'black'</span>, kde<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Distribution of BARTHAG Rating'</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Probability of Beating an Average D1 Opponent'</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Frequency'</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/barthag.png" class="img-fluid"></p>
+<p>Next, I wanted to take a look at the distribution of our dataset’s <em>BARTHAG</em> column. <em>BARTHAG</em> is the in-house power ranking computed by BartTorvik. Unfortunately (but understandably), their model is not public knowledge. However, we know it relies heavily on ADJOE and ADJDE. This indicator seeks to quantify how likely a team is to beat an average Division 1 opponent (essentially a team ranked ~180th each year) on a neutral court. As we can see from this distribution, it isn’t particularly normal. There seems to be a lot of rather poor performing teams that have a BARTHAG around ~0.3. The other values seem to be semi-uniformly distributed form 0.15-0.9.</p>
+</section>
+<section id="conferences-with-the-most-bids" class="level4">
+<h4 class="anchored" data-anchor-id="conferences-with-the-most-bids">Conferences With The Most Bids</h4>
+<div class="cell" data-execution_count="6">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>top_conferences <span class="op">=</span> full_barttorvik[full_barttorvik[<span class="st">'Made_Tournament'</span>] <span class="op">==</span> <span class="dv">1</span>][<span class="st">'CONF'</span>].value_counts().nlargest(<span class="dv">10</span>).index</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>df_top_10_conferences <span class="op">=</span> full_barttorvik[full_barttorvik[<span class="st">'CONF'</span>].isin(top_conferences)]</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>percentage_data <span class="op">=</span> df_top_10_conferences.groupby(<span class="st">'CONF'</span>)[<span class="st">'Made_Tournament'</span>].mean() <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>percentage_data <span class="op">=</span> percentage_data.sort_values(ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>custom_colors <span class="op">=</span> sns.color_palette(<span class="st">"flare"</span>, <span class="bu">len</span>(percentage_data))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">5</span>))</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.barplot(x<span class="op">=</span>percentage_data.index, y<span class="op">=</span>percentage_data.values, hue<span class="op">=</span>custom_colors, legend<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> p <span class="kw">in</span> ax.patches:</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    percentage_value <span class="op">=</span> p.get_height()</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    ax.annotate(<span class="ss">f'</span><span class="sc">{</span>percentage_value<span class="sc">:.2f}</span><span class="ss">%'</span>, (p.get_x() <span class="op">+</span> p.get_width() <span class="op">/</span> <span class="fl">2.</span>, p.get_height()),</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>                ha<span class="op">=</span><span class="st">'center'</span>, va<span class="op">=</span><span class="st">'center'</span>, xytext<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">10</span>), textcoords<span class="op">=</span><span class="st">'offset points'</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'</span><span class="sc">% o</span><span class="st">f Tournament Teams from the 10 Conferences with the Most Bids'</span>)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Conference'</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Percentage'</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="dv">0</span>, <span class="dv">100</span>)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/conferences.png" class="img-fluid"></p>
+<p>The NCAA does not distribute bids equally across its 32 conferences. Of the 32 conferences, there are 6 classified as “Major Conferences” (Big 12, Big Ten, Big East, ACC, SEC, and Pac 12). These major conferences get a disproportionate amount of the at-large bids given out each year. This is due to a multitude of reasons, including that these conferences have, on average, a higher skill level due to much more funding. I wanted to explore how common it has been to make the tournament from each conference over the last decade. I only plotted the ten conferences with the most bids, partly due to ease of visualization but also due to the fact that nearly every conference outside of this top ten only receives their one automatic qualifier bid per year.</p>
+<p>From this, we can see that the Big 12 gets the highest proportion of their teams into the tournament. Over the last decade, 65% of individual seasons in the conference have resulted in a tournament appearance. Beyond the six major conferences, there are a few “High-Mid Majors” that typically receive a few bids per year. The American, Atlantic 10, Mountain West, and West Coast Conference usually send ~1/5 of their teams to dance each season.</p>
+<p>Its also worth noting that each conference has a differing number of teams. The Big 12, despite the name, has spent most of the last decade with just 10 members. The ACC is on the larger end, with 15 members. With impending realignment over the next few years, the number of schools in each of these major conferences will drastically change. This chart will certainly look much different a decade from now.</p>
+</section>
+</section>
+<section id="correlation-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="correlation-analysis">Correlation Analysis</h3>
+<p>Next, I wanted to see how each of the columns in our dataset correlated with one another. Specifically, I wanted to see which metrics had the highest correlation with both making the tournament (<em>Made_Tournament)</em> and winning tournament games (<em>POSTSEASON).</em> To do so, I had to drop a lot of the columns that I didn’t feel made as much sense or were as interesting in terms of potential correlation. Our initial dataset contained 25 columns, so a correlation matrix that large would be hard to interpret.</p>
+<div class="cell" data-execution_count="7">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>numbered_bart <span class="op">=</span> full_barttorvik.copy()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>to_drop <span class="op">=</span> [<span class="st">'TEAM'</span>, <span class="st">'ADJOE'</span>, <span class="st">'ADJDE'</span>, <span class="st">'2P_O'</span>, <span class="st">'2P_D'</span>, <span class="st">'YEAR'</span>, <span class="st">'TotalRank'</span>, <span class="st">'TotalOffenseRank'</span>, <span class="st">'TotalDefenseRank'</span>, <span class="st">'G'</span>, <span class="st">'SEED'</span>, <span class="st">'YearRank'</span>, <span class="st">'POSTSEASON'</span>, <span class="st">'ADJ_T'</span>, <span class="st">'ORB'</span>, <span class="st">'DRB'</span>, <span class="st">'CONF'</span>]</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>numbered_bart.drop(columns<span class="op">=</span> to_drop, inplace<span class="op">=</span> <span class="va">True</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>correlation_matrix <span class="op">=</span> numbered_bart.corr()</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">14</span>))</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>sns.heatmap(correlation_matrix, annot<span class="op">=</span><span class="va">True</span>, cmap<span class="op">=</span><span class="st">'coolwarm'</span>, fmt<span class="op">=</span><span class="st">".2f"</span>, linewidths<span class="op">=</span><span class="fl">.5</span>, xticklabels<span class="op">=</span><span class="va">True</span>, yticklabels<span class="op">=</span><span class="va">True</span>, cbar_kws<span class="op">=</span>{<span class="st">'orientation'</span>: <span class="st">'vertical'</span>})</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(left<span class="op">=</span><span class="fl">0.1</span>, right<span class="op">=</span><span class="fl">0.9</span>, top<span class="op">=</span><span class="fl">0.9</span>, bottom<span class="op">=</span><span class="fl">0.1</span>)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Correlation Matrix for full_barttorvik'</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'correlation_matrix.png'</span>, bbox_inches<span class="op">=</span><span class="st">'tight'</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="correlation_matrix.png" class="img-fluid"></p>
+<p>From this matrix, we can immediately see a few strong relationships from our data. The <em>BARTHAG</em> metric seems to be heavily correlated with <em>WAB, YearOffenseRank,</em> and <em>YearDefenseRank.</em> None of this is surprising. One of the most surprising insights to me was the low correlation between making the tournament and defensive turnover rate. Teams better at forcing turnovers actually seem to have no change in their chance to make the tournament. Instead, the stronger correlation comes from offensive turnover rate (teams who take care of the ball and commit less turnovers are more likely to make the tournament).</p>
+<p>Next, I wanted to add the Postseason success column into the correlation matrix. This column, as created in the data gathering section, gives a value 0 through 7 to each team. A team with a value of 0 missed the tournament, while a team with a value of 7 won the entire thing. I decided to filter out all teams who missed the tournament for this matrix, hopefully to give a better glimpse into which factors remain important even after earning a spot in the tournament.</p>
+<div class="cell" data-execution_count="8">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>numbered_bart2 <span class="op">=</span> full_barttorvik.copy()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>to_drop <span class="op">=</span> [<span class="st">'TEAM'</span>, <span class="st">'ADJOE'</span>, <span class="st">'ADJDE'</span>, <span class="st">'2P_O'</span>, <span class="st">'2P_D'</span>, <span class="st">'YEAR'</span>, <span class="st">'TotalRank'</span>, <span class="st">'TotalOffenseRank'</span>, <span class="st">'TotalDefenseRank'</span>, <span class="st">'G'</span>, <span class="st">'YearRank'</span>, <span class="st">'Made_Tournament'</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">'ADJ_T'</span>, <span class="st">'ORB'</span>, <span class="st">'DRB'</span>, <span class="st">'CONF'</span>]</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>numbered_bart2.drop(columns<span class="op">=</span> to_drop, inplace<span class="op">=</span> <span class="va">True</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>numbered_bart2 <span class="op">=</span> numbered_bart2[numbered_bart2[<span class="st">'POSTSEASON'</span>] <span class="op">!=</span> <span class="dv">0</span>]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>correlation_matrix <span class="op">=</span> numbered_bart2.corr()</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">14</span>))</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>sns.heatmap(correlation_matrix, annot<span class="op">=</span><span class="va">True</span>, cmap<span class="op">=</span><span class="st">'coolwarm'</span>, fmt<span class="op">=</span><span class="st">".2f"</span>, linewidths<span class="op">=</span><span class="fl">.5</span>, xticklabels<span class="op">=</span><span class="va">True</span>, yticklabels<span class="op">=</span><span class="va">True</span>, cbar_kws<span class="op">=</span>{<span class="st">'orientation'</span>: <span class="st">'vertical'</span>})</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(left<span class="op">=</span><span class="fl">0.1</span>, right<span class="op">=</span><span class="fl">0.9</span>, top<span class="op">=</span><span class="fl">0.9</span>, bottom<span class="op">=</span><span class="fl">0.1</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Correlation Matrix for full_barttorvik'</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'correlation_matrix2.png'</span>, bbox_inches<span class="op">=</span><span class="st">'tight'</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="correlation_matrix2.png" class="img-fluid"></p>
+<p>Since this second correlation matrix filters out teams that didn’t make the tournament, it’s interesting to see what factors might be the differentiators for good teams. Unfortunately, for the sake of my personal curiosity, not much seems to change. Most of the correlations simply become slightly weaker, which makes sense considering that there is likely less variance in most of these values for teams good enough to make the tournament.</p>
+</section>
+<section id="hypothesis-generationmoving-forward" class="level3">
+<h3 class="anchored" data-anchor-id="hypothesis-generationmoving-forward">Hypothesis Generation/Moving Forward</h3>
+<p>After all of this exploration, I am given a few potential leads for how to further investigate my initial hypothesis. From the beginning, I wanted to look into the factors that determine which teams do and don’t make the NCAA Tournament. After looking at visualizations and correlations, it seems as though BartTorvik provides some comprehensive predictive metrics, which do a good job of answering my initial question. A team’s offensive and defensive efficiencies lead to success. The <em>BARTTHAG</em> ranking does a good job of aggregating these efficiencies to create a predictive power ranking metric. However, I think digging deeper into specific other factors that influence these results would be really interesting. The dataset used provides over two dozen columns of statistical measures, many of which are components of a team’s efficiency metrics. Figuring out which of these building blocks carries the most influence will be something I’m excited to explore moving forward.</p>
+</section>
+<section id="data-refiningoutlier-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="data-refiningoutlier-analysis">Data Refining/Outlier Analysis</h3>
+<p>Obviously, in a dataset of 3500+ samples, there are bound to be edge cases and outliers that don’t perfectly align with the rest of the data. Especially when considering that NCAA Tournament Selection is conducted by a committee, there is plenty of space for controversy and human error. Each year, there always seems to be a handful of surprise teams that end up getting at-large spots, as well as a few teams that seemingly had good enough metrics to have earned a spot in the tournament. While it’s undoubtedly heartbreaking for teams left on the outside looking in, it does make this project more engaging. There is no one objective ranking that determines which teams get in to the tournament. Instead, I hope to find a way to dig deeper into the human aspect of the selection process. Because of this, I actually think it is beneficial to leave all teams in my dataset and not remove outliers.</p>
+<p>While there might be a team that had a high enough number of Wins Above Bubble or a powerful enough offense to make the tournament in most instances, ultimately, there was a reason for each team not to have been selected. For this reason, I am not inclined to remove any teams from this dataset.</p>
+<section id="supposed-outliers" class="level4">
+<h4 class="anchored" data-anchor-id="supposed-outliers">Supposed Outliers</h4>
 <div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a visualization</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>sns.relplot(</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>tips,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"total_bill"</span>, y<span class="op">=</span><span class="st">"tip"</span>, col<span class="op">=</span><span class="st">"time"</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    hue<span class="op">=</span><span class="st">"smoker"</span>, style<span class="op">=</span><span class="st">"smoker"</span>, size<span class="op">=</span><span class="st">"size"</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<p><img src="eda_files/figure-html/cell-3-output-1.svg" class="img-fluid"></p>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>plot_columns <span class="op">=</span> [<span class="st">"ADJOE"</span>, <span class="st">"ADJDE"</span>]</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data<span class="op">=</span>full_barttorvik[plot_columns], palette<span class="op">=</span><span class="st">'Set2'</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'ADJOE and ADJDE Outlier Analysis'</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Values'</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
-</div>
+<p><img src="images/outlier.png" class="img-fluid"></p>
+<p>I decided to plot each team’s ADJOE and ADJDE to get a feel for any extreme outliers. Of course, had data been misinput, the outlier would be removed. However, we can see that each value in the dataset seems reasonable. Interestingly enough, there seem to be more teams that have been &gt;3 standard deviations from the mean for ADJOE than ADJDE. This may be something that gets looked into more down the road in this project.</p>
+</section>
+</section>
+<section id="conclusion" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
+<p>Through Exploratory Data Analysis, I was able to get a better grasp on the dataset that I’ll continue to use throughout this project. Summary statistics, visuals, and correlation analyses were important in helping me decide where to take this project next.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

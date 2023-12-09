@@ -1,5 +1,140 @@
 ---
 title: "Data Cleaning"
-format: html
+format:
+  html:
+    code-fold: true
+    toc: true
+    code-summary: "Show Code"
 ---
 
+## Data Cleaning
+
+In the Data Gathering tab, I imported a few different data sets, each of provides a different look at the concept of team stats within college basketball. Each data set contained far more columns than I ultimately will need, requiring me to do some basic data cleaning in order to make my data sets as each to use and manage as possible.
+
+### Cleaning the *Creighton* Data Frame
+
+After the initial data exploration, I saved the Creighton data set that was pulled from the "ncaahoopR" package on the Data Gathering tab. As previously mentioned, this data set has lots of unnecessary information, especially within the context of what I'm interested in.
+
+```{r}
+creighton <- read.csv("../data/creighton_2022_23.csv")
+head(creighton[, 1:5])
+```
+
+Next, I wanted to add a column that explains whether or not Creighton scored on a particular play
+
+```{python}
+
+import pandas as pd
+
+creighton = pd.read_csv("../data/creighton_2022_23.csv")
+
+def is_creighton_score(row):
+    if row['home'] == 'Creighton' and row['home_score'] > row['home_score_prev']:
+        return True
+    elif row['away'] == 'Creighton' and row['away_score'] > row['away_score_prev']:
+        return True
+    else:
+        return False
+
+creighton['home_score_prev'] = creighton.groupby('home')['home_score'].shift(1)
+creighton['away_score_prev'] = creighton.groupby('away')['away_score'].shift(1)
+creighton['Creighton_Score'] = creighton.apply(is_creighton_score, axis=1)
+creighton.drop(['home_score_prev', 'away_score_prev'], axis=1, inplace=True)
+creighton.to_csv("../data/creighton_2022_23_score.csv", index=False)
+```
+
+```{r}
+library(dplyr)
+
+creighton <- read.csv("../data/creighton_2022_23_score.csv")
+  
+creighton_cleaned <- creighton %>%
+  select(home, away, secs_remaining_absolute, description, score_diff, scoring_play, win_prob, Creighton_Score) %>%
+  mutate(time_left_mins = round(secs_remaining_absolute / 60, 2)) %>%
+  select(-secs_remaining_absolute)
+
+write.csv(creighton_cleaned, "../data/creighton_cleaned.csv", row.names = FALSE)
+
+head(creighton_cleaned, 10)
+```
+
+As you can see now, I filtered the data set to only have 8 features. This makes analysis much more feasible when I inevitably look to filter this data set further. The data also contains both qualitative and quantitative variables. It contains game situation information (score difference, time remaining, win probability), as well as a textual description of each play.
+
+### Further *Creighton* Cleaning (Text Data)
+
+As I mentioned in the above section, the Creighton data set I've been using contains a description column full of text data. I thought it might be interesting to classify each row based on whether or not the player mentioned in each description is a member of Creighton's roster or not.
+
+```{python}
+
+import pandas as pd
+
+creighton = pd.read_csv("../data/creighton_2022_23.csv")
+```
+
+```{python}
+
+creighton_roster = ["Jasen Green", "Ben Shtolzberg", "Ryan Nembhard", "Shereef Mitchell", "Francisco Farabello", "Zander Yates", "Ryan Kalkbrenner", "Mason Miller", "Sami Osmani", "John Christofilis", "Evan Young", "Devin Davis", "Trey Alexander", "Arthur Kaluma", "Fredrick King", "Baylor Scheierman"]
+
+search_pattern= '|'.join(creighton_roster)
+
+creighton_action = creighton[creighton['description'].apply(lambda x: any(roster in x for roster in creighton_roster))]
+
+columns_to_select= ["description", "scoring_play"]
+
+creighton_action = creighton_action.loc[:, columns_to_select]
+
+creighton_action.head(10)
+```
+
+```{python}
+print("Number of rows with Creighton player descriptions:", creighton_action.shape[0])
+```
+
+This creates a new data frame, only with the descriptions containing Creighton player names as well as whether or not it was ultimately a scoring play. However, I'd rather add a column back into our cleaned data frame that contains whether or not it pertains to a Creighton player. This is what I do below.
+
+```{python}
+creighton_cleaned = pd.read_csv("../data/creighton_cleaned.csv")
+
+creighton_roster = ["Jasen Green", "Ben Shtolzberg", "Ryan Nembhard", "Shereef Mitchell", "Francisco Farabello", "Zander Yates", "Ryan Kalkbrenner", "Mason Miller", "Sami Osmani", "John Christofilis", "Evan Young", "Devin Davis", "Trey Alexander", "Arthur Kaluma", "Fredrick King", "Baylor Scheierman"]
+
+creighton_cleaned["creighton_data"] = creighton_cleaned["description"].str.contains(search_pattern)
+
+creighton_cleaned.iloc[:, 1:10].head(10)
+```
+
+Printing the new *creighton_cleaned* data frame, we can see that the "creighton_data" column now contains information about whether or not a player on Creighton's 2022-23 roster was involved in each play.
+
+```{python}
+
+creighton_cleaned['players_involved'] = creighton_cleaned['description'].apply(lambda x: [name for name in creighton_roster if name in x] if any(name in x for name in creighton_roster) else None)
+
+creighton_cleaned.iloc[:, 1:10].head(10)
+```
+
+Here we can see the "players_involved" column that is added. It filters the description to find which players on the Creighton roster were involved in each play. If none were involved, the column returns None.
+
+Lastly, I wanted to get the count of each player's involvement to see who was a participant in the most plays.
+
+```{python}
+expanded_df = creighton_cleaned.explode("players_involved")
+player_counts = expanded_df["players_involved"].value_counts()
+
+print(player_counts)
+```
+
+From this, we can see that Baylor Scheierman was the most involved in plays in Creighton's 2022-23 season.
+
+Finally, we will save this cleaned data set for further use.
+
+```{python}
+
+creighton_cleaned.to_csv("../data/creighton_cleaned.csv", index= False)
+```
+
+![](images/wordcloud.png)
+
+Initially, I had used Vectorizer to create this wordcloud. Unfortunately, I spent over six hours trying to fix an error about no usable init.tcl that refused to go away when running this codeblock. For this reason, I'll leave the results but you will have to take my word for it that it was coded at one point.
+
+As we can see, the most common words from the description tab seem to be rebound, jumper, and missed. This might come in handy when looking deeper into which specific team actions correlate with overall success.
+
+These terms all seem to track as it appears to be a mix of common basketball occurrences as well as player names which were isolated above.

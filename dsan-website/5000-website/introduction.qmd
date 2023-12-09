@@ -1,10 +1,10 @@
 ---
-title: "Introduction"
+title: Introduction
 format: html
 bibliography: reference.bib
-toc: True
+toc: true
+jupyter: python3
 ---
-
 
 ## Project Overview
 
@@ -56,3 +56,4 @@ It is interesting to note that the tournament format and metrics looked at have 
 The paper introduces a decision tree model aiming to replicate the NCAA basketball tournament's team selection process. The author's model attempts to mimic this process by utilizing expert rankings and performance metrics, including RPI , top 50 wins, rank 200+ losses, strength of schedule, games against top 100 teams, and recent performance. The model was evaluated using data from 2012 to 2016 and ultimately demonstrated a high level of accuracy in selecting teams for the tournament. 
 
 The paper mentions that models will never be able to fully predict the human element of the tournament selection. Individual bias is hard to account for, but this retroactive fitting model is an interesting way to look at things. As formats and metrics continue to change, I wonder how successful a past-looking model is at being able to predict the future but there is a lot of valuable information here. Ultimately, I found this approach to be pretty interesting and will likely hope to model a similar approach during my project.
+

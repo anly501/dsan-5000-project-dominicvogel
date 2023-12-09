@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -97,10 +131,6 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Code</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../data/data.html" rel="" target="">
- <span class="menu-text">Data</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="../data_gathering/data_gathering.html" rel="" target="">
  <span class="menu-text">Data Gathering</span></a>
   </li>  
@@ -125,11 +155,7 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Decision Trees</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../arm/arm.html" rel="" target="">
- <span class="menu-text">ARM</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../conclusions.html" rel="" target="">
+    <a class="nav-link" href="../conclusion/conclusions.html" rel="" target="">
  <span class="menu-text">Conclusions</span></a>
   </li>  
 </ul>
@@ -144,7 +170,17 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data-cleaning" id="toc-data-cleaning" class="nav-link active" data-scroll-target="#data-cleaning">Data Cleaning</a>
+  <ul class="collapse">
+  <li><a href="#cleaning-the-creighton-data-frame" id="toc-cleaning-the-creighton-data-frame" class="nav-link" data-scroll-target="#cleaning-the-creighton-data-frame">Cleaning the <em>Creighton</em> Data Frame</a></li>
+  <li><a href="#further-creighton-cleaning-text-data" id="toc-further-creighton-cleaning-text-data" class="nav-link" data-scroll-target="#further-creighton-cleaning-text-data">Further <em>Creighton</em> Cleaning (Text Data)</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -166,8 +202,269 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<section id="data-cleaning" class="level2">
+<h2 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h2>
+<p>In the Data Gathering tab, I imported a few different data sets, each of provides a different look at the concept of team stats within college basketball. Each data set contained far more columns than I ultimately will need, requiring me to do some basic data cleaning in order to make my data sets as each to use and manage as possible.</p>
+<section id="cleaning-the-creighton-data-frame" class="level3">
+<h3 class="anchored" data-anchor-id="cleaning-the-creighton-data-frame">Cleaning the <em>Creighton</em> Data Frame</h3>
+<p>After the initial data exploration, I saved the Creighton data set that was pulled from the “ncaahoopR” package on the Data Gathering tab. As previously mentioned, this data set has lots of unnecessary information, especially within the context of what I’m interested in.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>creighton <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../data/creighton_2022_23.csv"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(creighton[, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    game_id       date                 home      away play_id
+1 401485099 2022-11-07 St. Thomas-Minnesota Creighton       1
+2 401485099 2022-11-07 St. Thomas-Minnesota Creighton       2
+3 401485099 2022-11-07 St. Thomas-Minnesota Creighton       3
+4 401485099 2022-11-07 St. Thomas-Minnesota Creighton       4
+5 401485099 2022-11-07 St. Thomas-Minnesota Creighton       5
+6 401485099 2022-11-07 St. Thomas-Minnesota Creighton       6</code></pre>
+</div>
+</div>
+<p>Next, I wanted to add a column that explains whether or not Creighton scored on a particular play</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>creighton <span class="op">=</span> pd.read_csv(<span class="st">"../data/creighton_2022_23.csv"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> is_creighton_score(row):</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> row[<span class="st">'home'</span>] <span class="op">==</span> <span class="st">'Creighton'</span> <span class="kw">and</span> row[<span class="st">'home_score'</span>] <span class="op">&gt;</span> row[<span class="st">'home_score_prev'</span>]:</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">True</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> row[<span class="st">'away'</span>] <span class="op">==</span> <span class="st">'Creighton'</span> <span class="kw">and</span> row[<span class="st">'away_score'</span>] <span class="op">&gt;</span> row[<span class="st">'away_score_prev'</span>]:</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">True</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>creighton[<span class="st">'home_score_prev'</span>] <span class="op">=</span> creighton.groupby(<span class="st">'home'</span>)[<span class="st">'home_score'</span>].shift(<span class="dv">1</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>creighton[<span class="st">'away_score_prev'</span>] <span class="op">=</span> creighton.groupby(<span class="st">'away'</span>)[<span class="st">'away_score'</span>].shift(<span class="dv">1</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>creighton[<span class="st">'Creighton_Score'</span>] <span class="op">=</span> creighton.<span class="bu">apply</span>(is_creighton_score, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>creighton.drop([<span class="st">'home_score_prev'</span>, <span class="st">'away_score_prev'</span>], axis<span class="op">=</span><span class="dv">1</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>creighton.to_csv(<span class="st">"../data/creighton_2022_23_score.csv"</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>creighton <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../data/creighton_2022_23_score.csv"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>creighton_cleaned <span class="ot">&lt;-</span> creighton <span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(home, away, secs_remaining_absolute, description, score_diff, scoring_play, win_prob, Creighton_Score) <span class="sc">%&gt;%</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time_left_mins =</span> <span class="fu">round</span>(secs_remaining_absolute <span class="sc">/</span> <span class="dv">60</span>, <span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>secs_remaining_absolute)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(creighton_cleaned, <span class="st">"../data/creighton_cleaned.csv"</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(creighton_cleaned, <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                   home      away
+1  St. Thomas-Minnesota Creighton
+2  St. Thomas-Minnesota Creighton
+3  St. Thomas-Minnesota Creighton
+4  St. Thomas-Minnesota Creighton
+5  St. Thomas-Minnesota Creighton
+6  St. Thomas-Minnesota Creighton
+7  St. Thomas-Minnesota Creighton
+8  St. Thomas-Minnesota Creighton
+9  St. Thomas-Minnesota Creighton
+10 St. Thomas-Minnesota Creighton
+                                                    description score_diff
+1                                          Foul on Will Engels.          0
+2                               Trey Alexander made Free Throw.          1
+3                             Trey Alexander missed Free Throw.          1
+4                                Will Engels Defensive Rebound.          1
+5            Will Engels made Jumper. Assisted by Brooks Allen.         -1
+6                                   Arthur Kaluma missed Layup.         -1
+7                           Parker Bjorklund Defensive Rebound.         -1
+8                   Parker Bjorklund missed Three Point Jumper.         -1
+9                          Baylor Scheierman Defensive Rebound.         -1
+10 Ryan Kalkbrenner made Jumper. Assisted by Baylor Scheierman.          1
+   scoring_play  win_prob Creighton_Score time_left_mins
+1         False 0.5000000           False          39.72
+2          True 0.5222360           False          39.72
+3         False 0.5222360           False          39.72
+4         False 0.5222466           False          39.70
+5          True 0.4774954            True          39.30
+6         False 0.4773323           False          39.05
+7         False 0.4772994           False          39.00
+8         False 0.4772336           False          38.90
+9         False 0.4771897           False          38.83
+10         True 0.5228655           False          38.75</code></pre>
+</div>
+</div>
+<p>As you can see now, I filtered the data set to only have 8 features. This makes analysis much more feasible when I inevitably look to filter this data set further. The data also contains both qualitative and quantitative variables. It contains game situation information (score difference, time remaining, win probability), as well as a textual description of each play.</p>
+</section>
+<section id="further-creighton-cleaning-text-data" class="level3">
+<h3 class="anchored" data-anchor-id="further-creighton-cleaning-text-data">Further <em>Creighton</em> Cleaning (Text Data)</h3>
+<p>As I mentioned in the above section, the Creighton data set I’ve been using contains a description column full of text data. I thought it might be interesting to classify each row based on whether or not the player mentioned in each description is a member of Creighton’s roster or not.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>creighton <span class="op">=</span> pd.read_csv(<span class="st">"../data/creighton_2022_23.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>creighton_roster <span class="op">=</span> [<span class="st">"Jasen Green"</span>, <span class="st">"Ben Shtolzberg"</span>, <span class="st">"Ryan Nembhard"</span>, <span class="st">"Shereef Mitchell"</span>, <span class="st">"Francisco Farabello"</span>, <span class="st">"Zander Yates"</span>, <span class="st">"Ryan Kalkbrenner"</span>, <span class="st">"Mason Miller"</span>, <span class="st">"Sami Osmani"</span>, <span class="st">"John Christofilis"</span>, <span class="st">"Evan Young"</span>, <span class="st">"Devin Davis"</span>, <span class="st">"Trey Alexander"</span>, <span class="st">"Arthur Kaluma"</span>, <span class="st">"Fredrick King"</span>, <span class="st">"Baylor Scheierman"</span>]</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>search_pattern<span class="op">=</span> <span class="st">'|'</span>.join(creighton_roster)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>creighton_action <span class="op">=</span> creighton[creighton[<span class="st">'description'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="bu">any</span>(roster <span class="kw">in</span> x <span class="cf">for</span> roster <span class="kw">in</span> creighton_roster))]</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>columns_to_select<span class="op">=</span> [<span class="st">"description"</span>, <span class="st">"scoring_play"</span>]</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>creighton_action <span class="op">=</span> creighton_action.loc[:, columns_to_select]</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>creighton_action.head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                          description  scoring_play
+1                     Trey Alexander made Free Throw.          True
+2                   Trey Alexander missed Free Throw.         False
+5                         Arthur Kaluma missed Layup.         False
+8                Baylor Scheierman Defensive Rebound.         False
+9   Ryan Kalkbrenner made Jumper. Assisted by Bayl...          True
+10                          Foul on Ryan Kalkbrenner.         False
+13  Ryan Kalkbrenner made Layup. Assisted by Baylo...          True
+15                   Arthur Kaluma Defensive Rebound.         False
+16          Trey Alexander missed Three Point Jumper.         False
+17                   Arthur Kaluma Offensive Rebound.         False</code></pre>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Number of rows with Creighton player descriptions:"</span>, creighton_action.shape[<span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of rows with Creighton player descriptions: 5009</code></pre>
+</div>
+</div>
+<p>This creates a new data frame, only with the descriptions containing Creighton player names as well as whether or not it was ultimately a scoring play. However, I’d rather add a column back into our cleaned data frame that contains whether or not it pertains to a Creighton player. This is what I do below.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>creighton_cleaned <span class="op">=</span> pd.read_csv(<span class="st">"../data/creighton_cleaned.csv"</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>creighton_roster <span class="op">=</span> [<span class="st">"Jasen Green"</span>, <span class="st">"Ben Shtolzberg"</span>, <span class="st">"Ryan Nembhard"</span>, <span class="st">"Shereef Mitchell"</span>, <span class="st">"Francisco Farabello"</span>, <span class="st">"Zander Yates"</span>, <span class="st">"Ryan Kalkbrenner"</span>, <span class="st">"Mason Miller"</span>, <span class="st">"Sami Osmani"</span>, <span class="st">"John Christofilis"</span>, <span class="st">"Evan Young"</span>, <span class="st">"Devin Davis"</span>, <span class="st">"Trey Alexander"</span>, <span class="st">"Arthur Kaluma"</span>, <span class="st">"Fredrick King"</span>, <span class="st">"Baylor Scheierman"</span>]</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>creighton_cleaned[<span class="st">"creighton_data"</span>] <span class="op">=</span> creighton_cleaned[<span class="st">"description"</span>].<span class="bu">str</span>.contains(search_pattern)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>creighton_cleaned.iloc[:, <span class="dv">1</span>:<span class="dv">10</span>].head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>        away  ... creighton_data
+0  Creighton  ...          False
+1  Creighton  ...           True
+2  Creighton  ...           True
+3  Creighton  ...          False
+4  Creighton  ...          False
+5  Creighton  ...           True
+6  Creighton  ...          False
+7  Creighton  ...          False
+8  Creighton  ...           True
+9  Creighton  ...           True
+
+[10 rows x 8 columns]</code></pre>
+</div>
+</div>
+<p>Printing the new <em>creighton_cleaned</em> data frame, we can see that the “creighton_data” column now contains information about whether or not a player on Creighton’s 2022-23 roster was involved in each play.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>creighton_cleaned[<span class="st">'players_involved'</span>] <span class="op">=</span> creighton_cleaned[<span class="st">'description'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: [name <span class="cf">for</span> name <span class="kw">in</span> creighton_roster <span class="cf">if</span> name <span class="kw">in</span> x] <span class="cf">if</span> <span class="bu">any</span>(name <span class="kw">in</span> x <span class="cf">for</span> name <span class="kw">in</span> creighton_roster) <span class="cf">else</span> <span class="va">None</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>creighton_cleaned.iloc[:, <span class="dv">1</span>:<span class="dv">10</span>].head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>        away  ...                       players_involved
+0  Creighton  ...                                   None
+1  Creighton  ...                       [Trey Alexander]
+2  Creighton  ...                       [Trey Alexander]
+3  Creighton  ...                                   None
+4  Creighton  ...                                   None
+5  Creighton  ...                        [Arthur Kaluma]
+6  Creighton  ...                                   None
+7  Creighton  ...                                   None
+8  Creighton  ...                    [Baylor Scheierman]
+9  Creighton  ...  [Ryan Kalkbrenner, Baylor Scheierman]
+
+[10 rows x 9 columns]</code></pre>
+</div>
+</div>
+<p>Here we can see the “players_involved” column that is added. It filters the description to find which players on the Creighton roster were involved in each play. If none were involved, the column returns None.</p>
+<p>Lastly, I wanted to get the count of each player’s involvement to see who was a participant in the most plays.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>expanded_df <span class="op">=</span> creighton_cleaned.explode(<span class="st">"players_involved"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>player_counts <span class="op">=</span> expanded_df[<span class="st">"players_involved"</span>].value_counts()</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(player_counts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>players_involved
+Baylor Scheierman      1020
+Arthur Kaluma           925
+Ryan Nembhard           895
+Trey Alexander          873
+Ryan Kalkbrenner        841
+Fredrick King           307
+Francisco Farabello     232
+Mason Miller            173
+Shereef Mitchell        158
+Ben Shtolzberg           69
+Zander Yates             35
+Sami Osmani              20
+Evan Young                5
+Name: count, dtype: int64</code></pre>
+</div>
+</div>
+<p>From this, we can see that Baylor Scheierman was the most involved in plays in Creighton’s 2022-23 season.</p>
+<p>Finally, we will save this cleaned data set for further use.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>creighton_cleaned.to_csv(<span class="st">"../data/creighton_cleaned.csv"</span>, index<span class="op">=</span> <span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/wordcloud.png" class="img-fluid"></p>
+<p>Initially, I had used Vectorizer to create this wordcloud. Unfortunately, I spent over six hours trying to fix an error about no usable init.tcl that refused to go away when running this codeblock. For this reason, I’ll leave the results but you will have to take my word for it that it was coded at one point.</p>
+<p>As we can see, the most common words from the description tab seem to be rebound, jumper, and missed. This might come in handy when looking deeper into which specific team actions correlate with overall success.</p>
+<p>These terms all seem to track as it appears to be a mix of common basketball occurrences as well as player names which were isolated above.</p>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

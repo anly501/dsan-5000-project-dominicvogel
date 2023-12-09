@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>DSAN-5000: Project - Naive Bayes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">DSAN-5000: Project</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../about_me.html" rel="" target="">
+ <span class="menu-text">About Me</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../introduction.html" rel="" target="">
+ <span class="menu-text">Introduction</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/anly501/dsan-5000-project-dominicvogel" rel="" target="">
+ <span class="menu-text">Code</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../data_gathering/data_gathering.html" rel="" target="">
+ <span class="menu-text">Data Gathering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../data_cleaning/data_cleaning.html" rel="" target="">
+ <span class="menu-text">Data Cleaning</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../eda/eda.html" rel="" target="">
+ <span class="menu-text">Data Exploration</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../clustering/clustering.html" rel="" target="">
+ <span class="menu-text">Clustering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../dimensionality_reduction/dimensionality_reduction.html" rel="" target="">
+ <span class="menu-text">Dimensionality Reduction</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../decision_trees/decision_trees.html" rel="" target="">
+ <span class="menu-text">Decision Trees</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../conclusion/conclusions.html" rel="" target="">
+ <span class="menu-text">Conclusions</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools ms-auto">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#naive-bayes" id="toc-naive-bayes" class="nav-link active" data-scroll-target="#naive-bayes">Naive Bayes</a>
+  <ul class="collapse">
+  <li><a href="#overview-of-naive-bayes" id="toc-overview-of-naive-bayes" class="nav-link" data-scroll-target="#overview-of-naive-bayes">Overview of Naive Bayes</a></li>
+  <li><a href="#variants-of-naive-bayes" id="toc-variants-of-naive-bayes" class="nav-link" data-scroll-target="#variants-of-naive-bayes">Variants of Naive Bayes</a></li>
+  <li><a href="#preparing-data-for-naive-bayes" id="toc-preparing-data-for-naive-bayes" class="nav-link" data-scroll-target="#preparing-data-for-naive-bayes">Preparing Data for Naive Bayes</a></li>
+  <li><a href="#feature-selection-for-ncaa-record-data" id="toc-feature-selection-for-ncaa-record-data" class="nav-link" data-scroll-target="#feature-selection-for-ncaa-record-data">Feature Selection for NCAA Record Data</a></li>
+  <li><a href="#feature-selection-for-creighton-text-data" id="toc-feature-selection-for-creighton-text-data" class="nav-link" data-scroll-target="#feature-selection-for-creighton-text-data">Feature Selection for Creighton Text Data</a></li>
+  <li><a href="#naive-bayes-with-ncaa-record-data" id="toc-naive-bayes-with-ncaa-record-data" class="nav-link" data-scroll-target="#naive-bayes-with-ncaa-record-data">Naive Bayes with NCAA Record Data</a></li>
+  <li><a href="#naive-bayes-with-creighton-text-data" id="toc-naive-bayes-with-creighton-text-data" class="nav-link" data-scroll-target="#naive-bayes-with-creighton-text-data">Naive Bayes with Creighton Text Data</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Naive Bayes</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="naive-bayes" class="level1">
+<h1>Naive Bayes</h1>
+<section id="overview-of-naive-bayes" class="level3">
+<h3 class="anchored" data-anchor-id="overview-of-naive-bayes">Overview of Naive Bayes</h3>
+<p>Naive Bayes is a machine learning algorithm based off of Bayes’ theorem. Bayes’ Theorem is a statistical concept that computes the probability of an event based on the occurence of a prior event. Bayes’ Theorem is calculated below:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/nb.jpg" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>The theorem states that the probability of an event A occurring given an event B occurred is equal to the probability event B occurs given event A occurred, multiplied by the probability event A occurs, and divided by the probability event B occurs. This allows us to conditionally update the probability of our goal event.</p>
+<p>Naive Bayes assumes conditional independence between all features. Because of this assumption, the algorithm gets significantly simplified, reducing the necessary probability calculations. Despite it being less computationally complex than other tools, Naive Bayes is still an incredibly powerful algorithm and can be used to gain impressive results.</p>
+<p>For my project’s sake, I hope to use Naive Bayes to get a better understanding of the fundamental relationships between the different features in my data. Hopefully, I can discover an optimal set of features that serve as a great classifier for both my tournament and Creighton text data.</p>
+</section>
+<section id="variants-of-naive-bayes" class="level3">
+<h3 class="anchored" data-anchor-id="variants-of-naive-bayes">Variants of Naive Bayes</h3>
+<ul>
+<li><p><strong>Gaussian Naive Bayes-</strong> Gaussian Naive Bayes is used on datasets that contain continuous, normally distributed features. I will be using this variant on my historical tournament data to try to classify which teams made the tournament. While my dataset contains different types of features, I will be selecting the ones that make the most sense for the Gaussian method below.</p></li>
+<li><p><strong>Multinomial Naive Bayes-</strong> Multinomial Naive Bayes is used on discrete datasets. Most commonly, it is used on text data classification. After vectorizing my Creighton data, I will run the Multinomial Naive Bayes method to try to determine which word(s) are most beneficial in determining whether or not Creighton scored from a particular text description.</p></li>
+<li><p><strong>Bernoulli Naive Bayes-</strong> Bernoulli Naive Bayes is often used on a dataset with binary features. It is used as a classification method on data that is assumed to come from the Bernoulli distribution. While it is not used in my project, there could definitely be use cases in future exploration on the topic of college basketball.</p></li>
+</ul>
+<section id="imports-and-dataset" class="level4">
+<h4 class="anchored" data-anchor-id="imports-and-dataset">Imports and Dataset</h4>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sklearn</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> itertools</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> spearmanr</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_extraction.text <span class="im">import</span> CountVectorizer, ENGLISH_STOP_WORDS</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.naive_bayes <span class="im">import</span> GaussianNB, MultinomialNB</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score, confusion_matrix, precision_score, recall_score, f1_score</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Utilizing the Naive Bayes method requires quite a few imports. Of course, pandas is used to import and handle our data. Our usual plotting libraries are used for visualization. The scipy library is used for Feature Selection, as I aim to find the optimal subset of features for the Naive Bayes method. The sklearn library contains the necessary functions to actually run the Naive Bayes method as well as analyze it.</p>
+</section>
+</section>
+<section id="preparing-data-for-naive-bayes" class="level3">
+<h3 class="anchored" data-anchor-id="preparing-data-for-naive-bayes">Preparing Data for Naive Bayes</h3>
+<section id="ncaa-record-data" class="level5">
+<h5 class="anchored" data-anchor-id="ncaa-record-data">NCAA Record Data</h5>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>bart <span class="op">=</span> pd.read_csv(<span class="st">"../data/cbb.csv"</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>to_drop <span class="op">=</span> [<span class="st">"TotalRank"</span>, <span class="st">"TotalOffenseRank"</span>, <span class="st">"TotalDefenseRank"</span>, <span class="st">"ADJOE"</span>, <span class="st">"ADJDE"</span>, <span class="st">"TEAM"</span>, <span class="st">"POSTSEASON"</span>, <span class="st">"SEED"</span>, <span class="st">"YEAR"</span>, <span class="st">"G"</span>]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>bart.drop(columns<span class="op">=</span> to_drop, inplace<span class="op">=</span> <span class="va">True</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>bart[<span class="st">'CONF'</span>] <span class="op">=</span> pd.Categorical(bart[<span class="st">'CONF'</span>])</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>bart[<span class="st">'CONF'</span>] <span class="op">=</span> bart[<span class="st">'CONF'</span>].cat.codes</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#Too many to run</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>more_drop <span class="op">=</span> [<span class="st">"ORB"</span>, <span class="st">"DRB"</span>, <span class="st">"2P_O"</span>, <span class="st">"2P_D"</span>, <span class="st">"3P_O"</span>, <span class="st">"3P_D"</span>]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>bart.drop(columns<span class="op">=</span> more_drop, inplace<span class="op">=</span> <span class="va">True</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>bart.columns</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>Index(['CONF', 'W', 'BARTHAG', 'EFG_O', 'EFG_D', 'TOR', 'TORD', 'FTR', 'FTRD',
+       'ADJ_T', 'WAB', 'YearRank', 'YearOffenseRank', 'YearDefenseRank',
+       'Made_Tournament'],
+      dtype='object')</code></pre>
+</div>
+</div>
+<p>To start, I imported our historic NCAA team data. While there are lots of relevant features that would make for interesting results, I ended up having to trim down which features would be tested for merit score combinations as to save time and computing power. I filtered out some of the columns that, from our correlation investigation, were less likely to have significant impacts on classification.</p>
+<div class="cell" data-execution_count="3">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>x<span class="op">=</span> bart.drop(<span class="st">"Made_Tournament"</span>, axis <span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>y<span class="op">=</span> bart[<span class="st">"Made_Tournament"</span>]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>X_train, X_split, y_train, y_split <span class="op">=</span> train_test_split(x, y, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>X_test, X_val, y_test, y_val <span class="op">=</span> train_test_split(X_split, y_split, test_size<span class="op">=</span><span class="fl">0.33</span>, random_state<span class="op">=</span><span class="dv">42</span>) </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>X_train.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">CONF</th>
+<th data-quarto-table-cell-role="th">W</th>
+<th data-quarto-table-cell-role="th">BARTHAG</th>
+<th data-quarto-table-cell-role="th">EFG_O</th>
+<th data-quarto-table-cell-role="th">EFG_D</th>
+<th data-quarto-table-cell-role="th">TOR</th>
+<th data-quarto-table-cell-role="th">TORD</th>
+<th data-quarto-table-cell-role="th">FTR</th>
+<th data-quarto-table-cell-role="th">FTRD</th>
+<th data-quarto-table-cell-role="th">ADJ_T</th>
+<th data-quarto-table-cell-role="th">WAB</th>
+<th data-quarto-table-cell-role="th">YearRank</th>
+<th data-quarto-table-cell-role="th">YearOffenseRank</th>
+<th data-quarto-table-cell-role="th">YearDefenseRank</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">944</td>
+<td>21</td>
+<td>14</td>
+<td>0.1859</td>
+<td>45.9</td>
+<td>46.6</td>
+<td>20.4</td>
+<td>18.6</td>
+<td>36.1</td>
+<td>34.9</td>
+<td>66.4</td>
+<td>-13.7</td>
+<td>299</td>
+<td>332</td>
+<td>195</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">199</td>
+<td>4</td>
+<td>22</td>
+<td>0.7703</td>
+<td>52.2</td>
+<td>47.3</td>
+<td>15.4</td>
+<td>18.4</td>
+<td>34.4</td>
+<td>36.0</td>
+<td>67.3</td>
+<td>-1.2</td>
+<td>70</td>
+<td>21</td>
+<td>191</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2967</td>
+<td>3</td>
+<td>21</td>
+<td>0.5394</td>
+<td>48.6</td>
+<td>47.2</td>
+<td>18.6</td>
+<td>16.4</td>
+<td>30.5</td>
+<td>30.8</td>
+<td>61.4</td>
+<td>-5.6</td>
+<td>152</td>
+<td>214</td>
+<td>119</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1270</td>
+<td>29</td>
+<td>7</td>
+<td>0.1371</td>
+<td>45.1</td>
+<td>52.9</td>
+<td>19.7</td>
+<td>21.4</td>
+<td>43.2</td>
+<td>43.0</td>
+<td>72.7</td>
+<td>-16.5</td>
+<td>325</td>
+<td>311</td>
+<td>310</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">801</td>
+<td>18</td>
+<td>10</td>
+<td>0.1082</td>
+<td>45.8</td>
+<td>51.3</td>
+<td>19.5</td>
+<td>18.2</td>
+<td>37.0</td>
+<td>48.5</td>
+<td>68.7</td>
+<td>-16.8</td>
+<td>338</td>
+<td>314</td>
+<td>335</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Next, I split the data into Training, Testing, and Validation sets. I ended up putting 70% of the data into the training set, 20% into testing, and the final 10% into validation. This prevents overfitting in our model as we are only training our classifier on 70% of our total data. The remaining data serves as a way to validate that our model is actually picking up on meaningful relationships and will be useful in the future, rather than just overfitting the specific set it was trained on.</p>
+</section>
+<section id="creighton-text-data" class="level5">
+<h5 class="anchored" data-anchor-id="creighton-text-data">Creighton Text Data</h5>
+<div class="cell" data-execution_count="4">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>creighton <span class="op">=</span> pd.read_csv(<span class="st">"../data/creighton_cleaned.csv"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Only want description and Creighton_Score</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>creighton <span class="op">=</span> creighton[[<span class="st">"Creighton_Score"</span>, <span class="st">"description"</span>]]</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>C_train, C_split <span class="op">=</span> train_test_split(creighton,test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>C_test, C_val <span class="op">=</span> train_test_split(C_split, test_size<span class="op">=</span><span class="fl">0.33</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>C_train.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Creighton_Score</th>
+<th data-quarto-table-cell-role="th">description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">540</td>
+<td>False</td>
+<td>Ryan Kalkbrenner Offensive Rebound.</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">7224</td>
+<td>False</td>
+<td>Foul on Shereef Mitchell.</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4950</td>
+<td>False</td>
+<td>Ryan Nembhard missed Free Throw.</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">9717</td>
+<td>False</td>
+<td>Rocket Watts made Free Throw.</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1146</td>
+<td>False</td>
+<td>Foul on Shereef Mitchell.</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Next, I repeated the same process for the Creighton text data. While this dataset contains quite a few features, there were only two needed for the Naive Bayes method. Those are 1) the textual description of each play and 2) whether or not that play resulted in Creighton scoring. Once again, the data was split into 70% training, 20% testing, 10% validation.</p>
+</section>
+</section>
+<section id="feature-selection-for-ncaa-record-data" class="level3">
+<h3 class="anchored" data-anchor-id="feature-selection-for-ncaa-record-data">Feature Selection for NCAA Record Data</h3>
+<div class="cell" data-execution_count="5">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> merit(x,y,correlation<span class="op">=</span><span class="st">"pearson"</span>):</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># x=matrix of features </span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># y=matrix (or vector) of targets </span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># correlation="pearson" or "spearman"</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  k <span class="op">=</span> x.shape[<span class="dv">1</span>]</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> correlation <span class="op">==</span> <span class="st">"spearman"</span>:</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    rho_xx <span class="op">=</span> np.mean(spearmanr(x, x, axis<span class="op">=</span> <span class="dv">0</span>)[<span class="dv">0</span>])</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    rho_xy <span class="op">=</span> np.mean(spearmanr(x, y, axis <span class="op">=</span> <span class="dv">0</span>) [<span class="dv">0</span>])</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">elif</span> correlation <span class="op">==</span> <span class="st">"pearson"</span>:</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    rho_xx <span class="op">=</span> np.mean(np.corrcoef(x, x, rowvar <span class="op">=</span> <span class="va">False</span>))</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    rho_xy <span class="op">=</span> np.mean(np.corrcoef(x, y, rowvar <span class="op">=</span> <span class="va">False</span>))</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>:</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Please set correlation to either 'pearson' or 'spearman' and try again."</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  merit_numerator <span class="op">=</span> k<span class="op">*</span> np.absolute(rho_xy)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  merit_denominator <span class="op">=</span> np.sqrt(k <span class="op">+</span> k <span class="op">*</span> (k<span class="op">-</span><span class="dv">1</span>) <span class="op">*</span> np.absolute(rho_xx)) </span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  merit_score <span class="op">=</span> merit_numerator <span class="op">/</span> merit_denominator</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> merit_score</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> maximize_CFS(x,y):</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  max_merit <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  optimal_subset <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  num_features <span class="op">=</span> x.shape[<span class="dv">1</span>]</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  list1 <span class="op">=</span> [<span class="op">*</span><span class="bu">range</span>(<span class="dv">0</span>, num_features)] </span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> L <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(list1) <span class="op">+</span> <span class="dv">1</span>): </span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    subsets <span class="op">=</span> itertools.combinations(list1, L)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> subset <span class="kw">in</span> subsets:</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>      subsetx <span class="op">=</span> x.iloc[:,<span class="bu">list</span>(subset)]</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>      subset_merit <span class="op">=</span> merit(subsetx, y)</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> subset_merit <span class="op">&gt;</span> max_merit:</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>        max_merit <span class="op">=</span> subset_merit</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>        optimal_subset <span class="op">=</span> <span class="bu">list</span>(subset)</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> optimal_subset</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Here, I created two separate functions.</p>
+<p>The first, <em>merit,</em> calculates a merit score that essentially calculates the relationship between the chosen features and the target feature (y). It defaults to Pearson correlation but can use Spearman correlation for the calculations if specified.</p>
+<p>The second, <em>maximize_CFS,</em> takes two matrices (x and y), and loops through all possible combinations of features. For each combination, it records its merit score and at the end returns the subset of features with the highest merit score. The goal of these function combinations is to find the optimal subset of features that has the strongest correlation strength with the target feature.</p>
+<div class="cell" data-execution_count="6">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>optimal_subset <span class="op">=</span> maximize_CFS(X_train, y_train)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>bart.iloc[:, optimal_subset]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">W</th>
+<th data-quarto-table-cell-role="th">BARTHAG</th>
+<th data-quarto-table-cell-role="th">WAB</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>33</td>
+<td>0.9531</td>
+<td>8.6</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>36</td>
+<td>0.9758</td>
+<td>11.3</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>33</td>
+<td>0.9375</td>
+<td>6.9</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>31</td>
+<td>0.9696</td>
+<td>7.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>37</td>
+<td>0.9728</td>
+<td>7.7</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">3518</td>
+<td>27</td>
+<td>0.7369</td>
+<td>-1.2</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3519</td>
+<td>27</td>
+<td>0.8246</td>
+<td>-2.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">3520</td>
+<td>28</td>
+<td>0.8065</td>
+<td>-0.3</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3521</td>
+<td>29</td>
+<td>0.8453</td>
+<td>-0.5</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">3522</td>
+<td>31</td>
+<td>0.8622</td>
+<td>1.1</td>
+</tr>
+</tbody>
+</table>
+
+<p>3523 rows × 3 columns</p>
+</div>
+</div>
+</div>
+<p>First, we run the <em>maximize_CFS</em> function on our features for the NCAA record data. After running it, we see that the optimal subset to maximize our correlation with making the tournament are the features W, BARTHAG, and WAB. These should come as no surprise after inspecting the correlation matrices from the EDA section of this project. BARTHAG is specifically computed as a predictive metric while WAB seeks to quantify how worthy of the tournament a specific team is. The third column, Wins, also tracks as teams that win more games should have a higher probability of making the tournament. Obviously, the relationship here isn’t perfect as teams in major conferences will play much harder schedules than teams in small conferences (and will thus be expected to win less games). However, wins do serve as a good proxy of on-court results.</p>
+<div class="cell" data-execution_count="7">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>to_keep <span class="op">=</span> [<span class="st">"W"</span>, <span class="st">"BARTHAG"</span>, <span class="st">"WAB"</span>]</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>X_optimal_train <span class="op">=</span> X_train[to_keep]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>X_optimal_val <span class="op">=</span> X_val[to_keep]</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>X_optimal_test <span class="op">=</span> X_test[to_keep]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>merit(X_optimal_train, y_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>0.826238481861058</code></pre>
+</div>
+</div>
+<p>Here, we calculate the merit score of this subset to be 0.83, which is a pretty strong correlation between the feature set and our target feature. These three features contain a lot of relevant information needed to predict whether or not a team ends up making the tournament.</p>
+</section>
+<section id="feature-selection-for-creighton-text-data" class="level3">
+<h3 class="anchored" data-anchor-id="feature-selection-for-creighton-text-data">Feature Selection for Creighton Text Data</h3>
+<p>For the Creighton text data, I sought to use a similar method of feature selection. Obviously, features look a bit different when working with a text dataset, but, by using the Vectorizer package to columnize the text by word frequency, this feature selection method can be applied.</p>
+<div class="cell" data-execution_count="8">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>CX_train <span class="op">=</span> C_train[<span class="st">"description"</span>].tolist()</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>cy_train <span class="op">=</span> C_train[<span class="st">"Creighton_Score"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell" data-execution_count="9">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>label_mapping <span class="op">=</span> {<span class="va">True</span>: <span class="dv">1</span>, <span class="va">False</span>: <span class="dv">0</span>}</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>cy_train <span class="op">=</span> cy_train.<span class="bu">map</span>(label_mapping)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>cy_train.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>540     0
+7224    0
+4950    0
+9717    0
+1146    0
+Name: Creighton_Score, dtype: int64</code></pre>
+</div>
+</div>
+<p>Here, I mapped the “Creighton_Score” column to 1 for plays where they scored and 0 for plays they did not. The column was initially set up as a boolean column before. This column was set as our target for Multinomial Naive Bayes.</p>
+<div class="cell" data-execution_count="10">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>vectorizer <span class="op">=</span> CountVectorizer(stop_words<span class="op">=</span><span class="bu">list</span>(ENGLISH_STOP_WORDS))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>CX_train_vectorized <span class="op">=</span> vectorizer.fit_transform(CX_train)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>text_df <span class="op">=</span> pd.DataFrame(CX_train_vectorized.toarray())</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>text_df.describe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">0</th>
+<th data-quarto-table-cell-role="th">1</th>
+<th data-quarto-table-cell-role="th">2</th>
+<th data-quarto-table-cell-role="th">3</th>
+<th data-quarto-table-cell-role="th">4</th>
+<th data-quarto-table-cell-role="th">5</th>
+<th data-quarto-table-cell-role="th">6</th>
+<th data-quarto-table-cell-role="th">7</th>
+<th data-quarto-table-cell-role="th">8</th>
+<th data-quarto-table-cell-role="th">9</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">510</th>
+<th data-quarto-table-cell-role="th">511</th>
+<th data-quarto-table-cell-role="th">512</th>
+<th data-quarto-table-cell-role="th">513</th>
+<th data-quarto-table-cell-role="th">514</th>
+<th data-quarto-table-cell-role="th">515</th>
+<th data-quarto-table-cell-role="th">516</th>
+<th data-quarto-table-cell-role="th">517</th>
+<th data-quarto-table-cell-role="th">518</th>
+<th data-quarto-table-cell-role="th">519</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">count</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>...</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+<td>7789.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">mean</td>
+<td>0.002953</td>
+<td>0.002824</td>
+<td>0.002696</td>
+<td>0.006933</td>
+<td>0.007446</td>
+<td>0.004494</td>
+<td>0.001155</td>
+<td>0.001027</td>
+<td>0.004622</td>
+<td>0.004622</td>
+<td>...</td>
+<td>0.000128</td>
+<td>0.001669</td>
+<td>0.003852</td>
+<td>0.002054</td>
+<td>0.000257</td>
+<td>0.001027</td>
+<td>0.006548</td>
+<td>0.003852</td>
+<td>0.000514</td>
+<td>0.001926</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">std</td>
+<td>0.054264</td>
+<td>0.053074</td>
+<td>0.051857</td>
+<td>0.082980</td>
+<td>0.085976</td>
+<td>0.066887</td>
+<td>0.033975</td>
+<td>0.032034</td>
+<td>0.067832</td>
+<td>0.096040</td>
+<td>...</td>
+<td>0.011331</td>
+<td>0.040822</td>
+<td>0.061945</td>
+<td>0.045279</td>
+<td>0.016023</td>
+<td>0.032034</td>
+<td>0.080658</td>
+<td>0.061945</td>
+<td>0.022657</td>
+<td>0.043844</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">min</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>...</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">25%</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>...</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">50%</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>...</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">75%</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>...</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">max</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>2.000000</td>
+<td>...</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+<td>1.000000</td>
+</tr>
+</tbody>
+</table>
+
+<p>8 rows × 520 columns</p>
+</div>
+</div>
+</div>
+<p>Next, I split the training text data into different columns based on each word. After removing stopwords, it seems as though 519 different words appeared at least once throughout our test data.</p>
+<div class="cell" data-execution_count="11">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>column_sums <span class="op">=</span> text_df.<span class="bu">sum</span>()</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>columns_to_remove <span class="op">=</span> column_sums[column_sums <span class="op">&lt;=</span> <span class="dv">700</span>].index</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>text_df <span class="op">=</span> text_df.drop(columns<span class="op">=</span>columns_to_remove)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>text_df.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>(7789, 12)</code></pre>
+</div>
+</div>
+<p>At this step, I had to greatly reduce the number of features we would be working with. In an ideal world, with a much more powerful machine, it would be great to test every combination of our 519 words to determine an optimal selection. There are likely some more specific words (i.e.&nbsp;player names) that might lead to a better classifier performance. However, I had to reduce our feature size to the 12 most frequently occurring words. Each appeared at least 700 times, meaning that there is a lot of data to work with. Because these descriptions are scraped from ESPN, each play description is generated from a preset group of templates. This is why, despite 12 words occurring 700+ times each, there were only 519 total words in the training corpus.</p>
+<div class="cell" data-execution_count="12">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Edit function to work with numpy arrays</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> maximize_CFS(x, y):</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    max_merit <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    optimal_subset <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    num_features <span class="op">=</span> x.shape[<span class="dv">1</span>]</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    list1 <span class="op">=</span> [<span class="op">*</span><span class="bu">range</span>(<span class="dv">0</span>, num_features)]</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> L <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="bu">len</span>(list1) <span class="op">+</span> <span class="dv">1</span>):</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>        subsets <span class="op">=</span> itertools.combinations(list1, L)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> subset <span class="kw">in</span> subsets:</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>            subsetx <span class="op">=</span> x[:, <span class="bu">list</span>(subset)]</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>            subset_merit <span class="op">=</span> merit(subsetx, y)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> subset_merit <span class="op">&gt;</span> max_merit:</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>                max_merit <span class="op">=</span> subset_merit</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>                optimal_subset <span class="op">=</span> <span class="bu">list</span>(subset)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> optimal_subset</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>I had to tweak the function slightly to work with numpy arrays, which is the form our training data took on.</p>
+<div class="cell" data-execution_count="13">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>cx <span class="op">=</span> text_df.values</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>cy <span class="op">=</span> cy_train.values</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>optimal_subset_indices <span class="op">=</span> maximize_CFS(cx, cy)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(optimal_subset_indices)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>x_opt <span class="op">=</span> text_df.iloc[:, optimal_subset_indices]</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x_opt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[3, 11]
+      178  457
+0       0    0
+1       0    0
+2       1    1
+3       1    1
+4       0    0
+...   ...  ...
+7784    0    0
+7785    1    1
+7786    0    0
+7787    0    0
+7788    0    0
+
+[7789 rows x 2 columns]</code></pre>
+</div>
+</div>
+<p>After running the all feature combinations of our 13 features, the optimal subset turns out to be just indexes 3 and 11, which ends up being columns 178 and 458 from our original 519 column set.</p>
+<div class="cell" data-execution_count="14">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>word_index <span class="op">=</span> <span class="dv">178</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>word_index2 <span class="op">=</span> <span class="dv">457</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>vocabulary <span class="op">=</span> vectorizer.vocabulary_</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>word <span class="op">=</span> <span class="bu">next</span>(word <span class="cf">for</span> word, index <span class="kw">in</span> vocabulary.items() <span class="cf">if</span> index <span class="op">==</span> word_index)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>word2 <span class="op">=</span> <span class="bu">next</span>(word <span class="cf">for</span> word, index <span class="kw">in</span> vocabulary.items() <span class="cf">if</span> index <span class="op">==</span> word_index2)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Word at column 178:"</span>, word)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Word at column 457:"</span>, word2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Word at column 178: free
+Word at column 457: throw</code></pre>
+</div>
+</div>
+<p>To determine what this word actually was, I indexed the corresponding words, which turned out to be “free” and “throw”. This implies that having these words in the play description is the feature combination that best correlates to whether or not Creighton scores on that particular play.</p>
+</section>
+<section id="naive-bayes-with-ncaa-record-data" class="level3">
+<h3 class="anchored" data-anchor-id="naive-bayes-with-ncaa-record-data">Naive Bayes with NCAA Record Data</h3>
+<p>Now that we have our optimal subset of features (that being Wins, BARTHAG, and Wins Above Bubble), we can begin to actually implement Naive Bayes classification. As mentioned at the start of this page, we will be using Gaussian Naive Bayes on our NCAA Data.</p>
+<div class="cell" data-execution_count="15">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>gnb_model <span class="op">=</span> GaussianNB()</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>gnb_model.fit(X_optimal_train, y_train)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>y_pred_train <span class="op">=</span> gnb_model.predict(X_optimal_train)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>y_pred_val <span class="op">=</span> gnb_model.predict(X_optimal_val)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>y_pred_test <span class="op">=</span> gnb_model.predict(X_optimal_test)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>accuracy <span class="op">=</span> accuracy_score(y_val, y_pred_val)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Validation Accuracy: </span><span class="sc">{</span>accuracy<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Validation Accuracy: 0.8882521489971347</code></pre>
+</div>
+</div>
+<p>From running the model, we can determine it has 88% accuracy when used on the validation set.</p>
+<div class="cell" data-execution_count="16">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>conf_matrix <span class="op">=</span> confusion_matrix(y_val, y_pred_val)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>sns.reset_orig()</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>sns.heatmap(conf_matrix, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">'d'</span>, cmap<span class="op">=</span><span class="st">'Blues'</span>, linewidths<span class="op">=</span><span class="fl">0.5</span>, cbar<span class="op">=</span><span class="va">False</span>, xticklabels<span class="op">=</span>[<span class="st">'Missed Tournament'</span>, <span class="st">'Made Tournament'</span>], yticklabels<span class="op">=</span>[<span class="st">'Missed Tournament'</span>, <span class="st">'Made Tournament'</span>])</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Actual'</span>)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Predicted'</span>)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Confusion Matrix'</span>)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/cm1.png" class="img-fluid"></p>
+<p>After generating the confusion matrix from our validation set, we can see just how well our model is doing at classification. The model does a fantastic job at predicting teams that miss the tournament, but does a much less ideal job when it comes to actually predicting tournament teams.</p>
+<div class="cell" data-execution_count="17">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>precision <span class="op">=</span> precision_score(y_val, y_pred_val)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>recall <span class="op">=</span> recall_score(y_val, y_pred_val)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>f1 <span class="op">=</span> f1_score(y_val, y_pred_val)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Precision: </span><span class="sc">{</span>precision<span class="sc">:.2f}</span><span class="ss">'</span>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Recall: </span><span class="sc">{</span>recall<span class="sc">:.2f}</span><span class="ss">'</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'F1 Score: </span><span class="sc">{</span>f1<span class="sc">:.2f}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Precision: 0.66
+Recall: 0.85
+F1 Score: 0.75</code></pre>
+</div>
+</div>
+<p>For this model, our Precision was 66%. This means that ~2/3 of the teams that actually made the tournament were predicted by our model to (57/86). The model’s recall was 85%. This means that 57 out of the 67 teams it predicted to make the tournament actually did end up making it. The harmonic mean of those two values (F1 Score) was 0.75.</p>
+<p>Overall, I am moderately impressed with this model. While it leaves something to be desired in terms of precision, it does a really good job at filtering out teams that won’t end up making the tournament. Of the teams it guessed would miss who actually made it in, my hypothesis is that most of them were automatic qualifiers from winning their conference tournament. In further analysis, I would like to filter the auto-qualifiers from the dataset, as they kind of break the system. Many smaller conferences end up sending teams with middling records and metrics as their sole representative each year. While this is part of what makes the tournament so fun, I think it also makes it hard to create a model, as those teams would not have been selected had they not won their tournament.</p>
+</section>
+<section id="naive-bayes-with-creighton-text-data" class="level3">
+<h3 class="anchored" data-anchor-id="naive-bayes-with-creighton-text-data">Naive Bayes with Creighton Text Data</h3>
+<p>For the Creighton data, we simply are using the words “free” and “throw” to classify whether or not Creighton scored on a particular play. I have my doubts about how well this model will work, but it may prove me wrong.</p>
+<div class="cell" data-execution_count="18">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>CX_test <span class="op">=</span> C_test[<span class="st">"description"</span>]</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>Cy_test <span class="op">=</span> C_test[<span class="st">"Creighton_Score"</span>]</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>CX_test_timeout <span class="op">=</span> CX_test.<span class="bu">str</span>.lower().<span class="bu">str</span>.count(<span class="st">"throw"</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>CX_test_free <span class="op">=</span> CX_test.<span class="bu">str</span>.lower().<span class="bu">str</span>.count(<span class="st">"free"</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>CX_test_timeout.value_counts()</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>CX_test_free.value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<pre><code>0    2021
+1     216
+Name: description, dtype: int64</code></pre>
+</div>
+</div>
+<p>First, I wanted to print out the counts of assisted from our test set. The word “throw” appears 206 times out of 2237 possible occurrences (~9,2%). The word “free” appears 216 times out of 2237 occurrences (~ 9.7%) These words also almost always appear together, as in the term ‘free throw’.</p>
+<div class="cell" data-execution_count="19">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> warnings.catch_warnings():</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    warnings.simplefilter(<span class="st">"ignore"</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    CX_test_vectorized <span class="op">=</span> vectorizer.transform(CX_test).toarray()</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    text_df_test <span class="op">=</span> pd.DataFrame(CX_test_vectorized)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    creighton_test_x <span class="op">=</span> text_df_test.iloc[:, optimal_subset_indices]</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    nb_model <span class="op">=</span> MultinomialNB()</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    nb_model.fit(x_opt, cy_train)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    Cy_pred <span class="op">=</span> nb_model.predict(creighton_test_x)</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    accuracy <span class="op">=</span> accuracy_score(Cy_test.values, Cy_pred)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Accuracy of the Naive Bayes model:"</span>, accuracy)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Accuracy of the Naive Bayes model: 0.8828788556101922</code></pre>
+</div>
+</div>
+<p>As mentioned before, the type of Naive Bayes used for text data is Multinomial Naive Bayes. After creating the model from our training data, it then is applied to our test set. Initially, I was surprised to see 88% accuracy, but for reasons I will get into below it turned out not to actually be very surprising.</p>
+<div class="cell" data-execution_count="20">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>label_mapping <span class="op">=</span> {<span class="va">True</span>: <span class="dv">1</span>, <span class="va">False</span>: <span class="dv">0</span>}</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>Cy_test <span class="op">=</span> C_test[<span class="st">"Creighton_Score"</span>].<span class="bu">map</span>(label_mapping)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>Cy_test.value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<pre><code>0    1975
+1     262
+Name: Creighton_Score, dtype: int64</code></pre>
+</div>
+</div>
+<p>From our test data, I wanted to see how often Creighton actually scored. They scored on 262 of the 2237 plays in the test data (~12.3%). Since this frequency is rather low, I assume our model picked up on this and classified most of our test data as not being a Creighton scoring play.</p>
+<div class="cell" data-execution_count="21">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>conf_matrix <span class="op">=</span> confusion_matrix(Cy_test, Cy_pred)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>plt.figure()</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>sns.heatmap(conf_matrix.T, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">'d'</span>, cmap<span class="op">=</span><span class="st">'Blues'</span>, cbar<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>            xticklabels<span class="op">=</span>[<span class="st">'No Score'</span>, <span class="st">'Creighton Score'</span>], yticklabels<span class="op">=</span>[<span class="st">'No Score'</span>, <span class="st">'Creighton Score'</span>])</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'True Labels'</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Predicted Labels'</span>)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Confusion Matrix Heatmap'</span>)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/cor2.png" class="img-fluid"></p>
+<p>In fact, this ended up being entirely the case. The model went ahead and predicted that there was no Creighton score on every single play. Because of this, the accuracy is high on first glance, but the precision and recall are non-existent. This model does a terrible job at prediction and is significantly underfitted. This is interesting because a “free throw” is at least a high potential scoring play. Most teams shoot well above 50% from the line, meaning that each time those words appear, it is more likely than not that someone scored. However, devoid of all context, I guess you don’t know which team is shooting the free throw and thus the classifier sees better value in guessing it’s either the other team shooting or a Creighton miss.</p>
+</section>
+<section id="conclusion" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
+<p>I was pleasantly satisfied with the Naive Bayes results of my NCAA record data, while the classification of the text data left a lot to be desired. Funnily enough, both had similar accuracy scores, which is a fantastic reminder that accuracy score alone can be incredibly deceiving. The text model was about as worthless as it could possibly be and definitely could use some fine-tuning. One thing that I think would have really benefited the text model is if I was able to choose an optimal feature set from a larger pool of features. Having to narrow the features down to 12 (especially when much of the data had hundreds of occurrences) , made it harder to find an optimal set. Hopefully, one day I will have a more powerful computer (or more patience) that will allow me to do so.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

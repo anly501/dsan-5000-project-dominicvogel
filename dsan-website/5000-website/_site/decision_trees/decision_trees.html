@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -97,10 +131,6 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Code</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../data/data.html" rel="" target="">
- <span class="menu-text">Data</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="../data_gathering/data_gathering.html" rel="" target="">
  <span class="menu-text">Data Gathering</span></a>
   </li>  
@@ -125,11 +155,7 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Decision Trees</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../arm/arm.html" rel="" target="">
- <span class="menu-text">ARM</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../conclusions.html" rel="" target="">
+    <a class="nav-link" href="../conclusion/conclusions.html" rel="" target="">
  <span class="menu-text">Conclusions</span></a>
   </li>  
 </ul>
@@ -144,7 +170,19 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#decision-trees" id="toc-decision-trees" class="nav-link active" data-scroll-target="#decision-trees">Decision Trees</a>
+  <ul class="collapse">
+  <li><a href="#introduction-to-decision-trees" id="toc-introduction-to-decision-trees" class="nav-link" data-scroll-target="#introduction-to-decision-trees">Introduction to Decision Trees</a></li>
+  <li><a href="#random-classifier-function" id="toc-random-classifier-function" class="nav-link" data-scroll-target="#random-classifier-function">Random Classifier Function</a></li>
+  <li><a href="#decision-tree-with-no-wab-barthag-or-w" id="toc-decision-tree-with-no-wab-barthag-or-w" class="nav-link" data-scroll-target="#decision-tree-with-no-wab-barthag-or-w">Decision Tree With No WAB, BARTHAG, or W</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -166,8 +204,438 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<section id="decision-trees" class="level1">
+<h1>Decision Trees</h1>
+<section id="introduction-to-decision-trees" class="level3">
+<h3 class="anchored" data-anchor-id="introduction-to-decision-trees">Introduction to Decision Trees</h3>
+<p>Decision Trees are a machine learning concept that seek to intuitively represent decision making processes. They can be used for both classification and regression and seek to break down the processes into manageable, interpretable chunks.</p>
+<p>A decision tree starts with a root node. The algorithm will find the specific feature split from the dataset that provides the most information about the target variable. There are a few methods of calculating these nodes. The one that I will use is Gini Impurity, which calculates how often a randomly chosen element would be incorrectly classified. The goal is to minimize Gini Impurity at each node, allowing for easier classification. Another metric that could be used to split a decision tree is Information Gain. This measures the reduction in entropy that occurs by splitting the dataset at a particular point.</p>
+<p>After the initial root node is discovered, the splitting point is also determined. For example, since we once again be using our NCAA data to classify whether or not teams made the tournament, our root node might look something like “W &gt; 20”. In this case, all teams with more than 20 wins would be split towards once branch, while the teams with 20 or less wins would be sent to a different branch. This process repeats itself for a certain number of levels, determined by the modeler. Having too many levels of a decision tree could lead to overfitting and needing to account for every edge case. Having too few levels of a decision tree might not accurately capture all of the important information contained in the dataset. The last level of the tree contains leaf nodes, which are used for prediction. On this page, I will be using a Decision Tree for classification, and thus these leaf nodes will seek to predict whether or not a team made the tournament based on above criteria.</p>
+<section id="imports-and-dataset" class="level4">
+<h4 class="anchored" data-anchor-id="imports-and-dataset">Imports and Dataset</h4>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn <span class="im">import</span> metrics, tree </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score, recall_score, precision_score, precision_recall_fscore_support, confusion_matrix</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.tree <span class="im">import</span> DecisionTreeClassifier, plot_tree</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>bart <span class="op">=</span> pd.read_csv(<span class="st">"../data/bart_dimensionality.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Once again, we have all of our usual imports. We will also be using lots of functions from the sklearn package to help us generate our decision trees as well as analyze them.</p>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>class_labels <span class="op">=</span> {<span class="dv">1</span>: <span class="st">'Missed'</span>, <span class="dv">0</span>: <span class="st">'Made'</span>}</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.countplot(y<span class="op">=</span><span class="st">'Made_Tournament'</span>, data<span class="op">=</span>bart, palette<span class="op">=</span><span class="st">'viridis'</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Distribution of whether or not teams made the NCAA Tournament'</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Count'</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Made Tournament?'</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>ax.set_yticklabels([class_labels[label] <span class="cf">for</span> label <span class="kw">in</span> bart[<span class="st">'Made_Tournament'</span>].unique()])</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, count <span class="kw">in</span> <span class="bu">enumerate</span>(bart[<span class="st">'Made_Tournament'</span>].value_counts()):</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    ax.text(count <span class="op">+</span> <span class="dv">1</span>, i, <span class="bu">str</span>(count), va<span class="op">=</span><span class="st">'center'</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/madetourney.png" class="img-fluid"></p>
+<p>After a bit of data cleaning, I sought to visualize our target for classification. Once again, we will be seeking to classify teams based on whether or not they made the tournament. There is an imbalance between the sheer size of each of these two categories, meaning that our classifier should not seek to create an even split of both labels.</p>
+</section>
+</section>
+<section id="random-classifier-function" class="level3">
+<h3 class="anchored" data-anchor-id="random-classifier-function">Random Classifier Function</h3>
+<div class="cell" data-execution_count="3">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> random_classifier(y_data, seed<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    np.random.seed(seed)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    ypred <span class="op">=</span> np.random.randint(<span class="dv">2</span>, size<span class="op">=</span><span class="bu">len</span>(y_data))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"-----RANDOM CLASSIFIER-----"</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Prediction Count:"</span>, Counter(ypred).values())</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Probability of Predictions:"</span>, np.fromiter(Counter(ypred).values(), dtype<span class="op">=</span><span class="bu">float</span>) <span class="op">/</span> <span class="bu">len</span>(y_data))</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    accuracy <span class="op">=</span> accuracy_score(y_data, ypred)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    precision, recall, fscore, _ <span class="op">=</span> precision_recall_fscore_support(y_data, ypred)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Accuracy:"</span>, accuracy)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Precision (Class 0, Class 1):"</span>, precision)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Recall (Class 0, Class 1):"</span>, recall)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"F1-score (Class 0, Class 1):"</span>, fscore)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> bart[<span class="st">'Made_Tournament'</span>]</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>random_classifier(y, seed<span class="op">=</span><span class="dv">101</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>-----RANDOM CLASSIFIER-----
+Prediction Count: dict_values([1796, 1727])
+Probability of Predictions: [0.50979279 0.49020721]
+Accuracy: 0.5089412432585865
+Precision (Class 0, Class 1): [0.83381587 0.19654788]
+Recall (Class 0, Class 1): [0.49947971 0.5515625 ]
+F1-score (Class 0, Class 1): [0.62472885 0.28981938]</code></pre>
+</div>
+</div>
+<p>A random classifier model is created above. This random classifier will serve as our baseline. Its goal is to make predictions through random guessing. The classifier essentially generates a random number 1 or 0 for each of our points. The accuracy of this model was 50%, which means that it did its job. Since there is an imbalance between making and missing the tournament (~82% of teams miss), we will need a model that can also do something more meaningful than guess 0 and be right 82% of the time.</p>
+<section id="decision-tree" class="level4">
+<h4 class="anchored" data-anchor-id="decision-tree">Decision Tree</h4>
+<div class="cell" data-execution_count="4">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>feature_columns <span class="op">=</span> [col <span class="cf">for</span> col <span class="kw">in</span> bart.columns <span class="cf">if</span> col <span class="op">!=</span> <span class="st">'Made_Tournament'</span>]</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> bart[feature_columns].copy()</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>target_column <span class="op">=</span> [<span class="st">'Made_Tournament'</span>]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> bart[target_column].copy()</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>X_train, X_test, Y_train, Y_test <span class="op">=</span> train_test_split(X, Y, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">1</span>) </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> DecisionTreeClassifier()</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> model.fit(X_train,Y_train)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>Y_pred <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy:"</span>,metrics.accuracy_score(Y_test, Y_pred))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Accuracy: 0.8845789971617786</code></pre>
+</div>
+</div>
+<p>Here, we separate our data into training and test sets. The training data encompasses 70% of our dataset, while the test data takes up the remaining 30%. Here, we run the Decision Tree Classifier function on our training data to build our initial model. From this, we can see that our accuracy has shot up to over 88%. This is a significant improvement, meaning that our model classified 88% of teams correctly.</p>
+<div class="cell" data-execution_count="5">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> custom_plot_tree(model, X, Y):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="fl">22.5</span>, <span class="dv">15</span>))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    plot_tree(model, feature_names<span class="op">=</span>X.columns, filled<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>custom_plot_tree(model, X_train, Y_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="decision_trees_files/figure-html/cell-6-output-1.png" width="1693" height="1128"></p>
+</div>
+</div>
+<p>However, our decision tree seems to be relatively large. At some points within the tree, it can get almost 20 levels deep, a sign of potential overfitting. To get around this, we will adjust our hyperparameters.</p>
+<div class="cell" data-execution_count="6">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>test_results <span class="op">=</span> []</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>train_results <span class="op">=</span> []</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> num_layer <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">20</span>):</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> DecisionTreeClassifier(max_depth<span class="op">=</span>num_layer)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> model.fit(X_train, Y_train)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    yp_train <span class="op">=</span> model.predict(X_train)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    yp_test <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    test_results.append([num_layer, accuracy_score(Y_test, yp_test), recall_score(Y_test, yp_test, pos_label<span class="op">=</span><span class="dv">0</span>),</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>                         recall_score(Y_test, yp_test, pos_label<span class="op">=</span><span class="dv">1</span>)])</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    train_results.append([num_layer, accuracy_score(Y_train, yp_train), recall_score(Y_train, yp_train, pos_label<span class="op">=</span><span class="dv">0</span>),</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>                          recall_score(Y_train, yp_train, pos_label<span class="op">=</span><span class="dv">1</span>)])</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>num_layers <span class="op">=</span> [result[<span class="dv">0</span>] <span class="cf">for</span> result <span class="kw">in</span> test_results]</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>train_accuracy_values <span class="op">=</span> [result[<span class="dv">1</span>] <span class="cf">for</span> result <span class="kw">in</span> train_results]</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>test_accuracy_values <span class="op">=</span> [result[<span class="dv">1</span>] <span class="cf">for</span> result <span class="kw">in</span> test_results]</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>train_recall_0_values <span class="op">=</span> [result[<span class="dv">2</span>] <span class="cf">for</span> result <span class="kw">in</span> train_results]</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>test_recall_0_values <span class="op">=</span> [result[<span class="dv">2</span>] <span class="cf">for</span> result <span class="kw">in</span> test_results]</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>train_recall_1_values <span class="op">=</span> [result[<span class="dv">3</span>] <span class="cf">for</span> result <span class="kw">in</span> train_results]</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>test_recall_1_values <span class="op">=</span> [result[<span class="dv">3</span>] <span class="cf">for</span> result <span class="kw">in</span> test_results]</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, train_accuracy_values, label<span class="op">=</span><span class="st">'Training Accuracy'</span>, marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'green'</span>)</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, test_accuracy_values, label<span class="op">=</span><span class="st">'Testing Accuracy'</span>, marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'purple'</span>)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of Layers in Decision Tree (max_depth)'</span>)</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Accuracy'</span>)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Training and Testing Accuracy vs. Number of Layers'</span>)</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, train_recall_0_values, label<span class="op">=</span><span class="st">'Train Recall (y=0)'</span>, marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'green'</span>)</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, test_recall_0_values, label<span class="op">=</span><span class="st">'Test Recall (y=0)'</span>, marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'purple'</span>)</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of Layers in Decision Tree (max_depth)'</span>)</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Recall for y=0'</span>)</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Training and Testing Recall for y=0 vs. Number of Layers'</span>)</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, train_recall_1_values, label<span class="op">=</span><span class="st">'Train Recall (y=1)'</span>, marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'green'</span>)</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, test_recall_1_values, label<span class="op">=</span><span class="st">'Test Recall (y=1)'</span>, marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'purple'</span>)</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of Layers in Decision Tree (max_depth)'</span>)</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Recall for y=1'</span>)</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Training and Testing Recall for y=1 vs. Number of Layers'</span>)</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/accuracy.png" class="img-fluid"></p>
+<p><img src="images/recall1.png" class="img-fluid"></p>
+<p><img src="images/recall2.png" class="img-fluid"></p>
+<p>The code above loops through a range of 1 to 20 layers and computes accuracy and recall of each. Our goal is to not overfit our model and to convey the greatest amount of critical information in the least amount of layers. To discern our optimal layer amount, we need to find the point where train accuracy and precision are relatively equal to the test accuracy and precision. After analyzing the three charts, this seems to be at a depth of only 2. With only 2 decisions being made, our tree might be overly simple, but lets test it out.</p>
+<div class="cell" data-execution_count="7">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tree.DecisionTreeClassifier(max_depth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> model.fit(X_train, Y_train)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>yp_train <span class="op">=</span> model.predict(X_train)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>cm_test <span class="op">=</span> confusion_matrix(Y_test, yp_test)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">4</span>))</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>sns.heatmap(cm_test, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">'d'</span>, cmap<span class="op">=</span><span class="st">'Blues'</span>, annot_kws<span class="op">=</span>{<span class="st">"size"</span>: <span class="dv">16</span>}, cbar<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>            xticklabels<span class="op">=</span>[<span class="st">'Missed Tournament'</span>, <span class="st">'Made Tournament'</span>], yticklabels<span class="op">=</span>[<span class="st">'Missed Tournament'</span>, <span class="st">'Made Tournament'</span>])</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Confusion Matrix - Test Set'</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'True Label'</span>) </span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Predicted Label'</span>) </span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'confusion_matrix.png'</span>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="confusion_matrix.png" class="img-fluid"></p>
+<p>Above, we created a tree with a max depth of only 2 layers. Then, we plotted the confusion matrix. After just two splits, we can see that our model does a pretty solid job of classification. Lets run the specific metrics on just how well it did below.</p>
+<div class="cell" data-execution_count="8">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>accuracy_test <span class="op">=</span> accuracy_score(Y_test,yp_test)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>precision_test <span class="op">=</span> precision_score(Y_test, yp_test)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>recall_test <span class="op">=</span> recall_score(Y_test, yp_test)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Metrics - Test Set:"</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Accuracy: </span><span class="sc">{</span>accuracy_test<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Precision: </span><span class="sc">{</span>precision_test<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Recall: </span><span class="sc">{</span>recall_test<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Metrics - Test Set:
+Accuracy: 0.9319
+Precision: 0.8639
+Recall: 0.7095</code></pre>
+</div>
+</div>
+<p>Even though there are only two splits in our decision tree, we achieve 93% accuracy. 985 of the 1057 teams in our test set were classified correctly. 127 of the 179 teams our model thought would make the tournament (86.4%) did, and 127 of the 147 teams who actually made the tournament were classified correctly.</p>
+<div class="cell" data-execution_count="9">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">8</span>))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>plot_tree(model, filled<span class="op">=</span><span class="va">True</span>, feature_names<span class="op">=</span>X_train.columns, class_names<span class="op">=</span>[<span class="st">'0'</span>, <span class="st">'1'</span>], rounded<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Decision Tree Visualization'</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'dt1.png'</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="dt1.png" class="img-fluid" width="454"></p>
+<p>From the code above, we can now visualize the actual splits in our data. What is interesting to me is that our second split doesn’t actually matter at all. All of our classification is done after the first split. By classifying all teams with &gt;0.15 Wins Above Bubble as tournament teams and all others as non-tournament teams, the model is already able to achieve 93% accuracy.</p>
+</section>
+</section>
+<section id="decision-tree-with-no-wab-barthag-or-w" class="level3">
+<h3 class="anchored" data-anchor-id="decision-tree-with-no-wab-barthag-or-w">Decision Tree With No WAB, BARTHAG, or W</h3>
+<p>To challenge our decision tree, I decided to take out the WAB, BARTHAG, and Wins features from our data. I felt as though this makes the job of the decision tree too easy and doesn’t actually teach me much about which metrics are important in selection. We had already discovered the importance of these features on other tabs, so this time I wanted our model to struggle a little more.</p>
+<div class="cell" data-execution_count="10">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>to_drop <span class="op">=</span> [<span class="st">"WAB"</span>, <span class="st">"W"</span>, <span class="st">"G"</span>, <span class="st">"BARTHAG"</span>]</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>bart2 <span class="op">=</span> bart.drop(columns<span class="op">=</span> to_drop)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>feature_columns <span class="op">=</span> [col <span class="cf">for</span> col <span class="kw">in</span> bart2.columns <span class="cf">if</span> col <span class="op">!=</span> <span class="st">'Made_Tournament'</span>]</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> bart[feature_columns].copy()</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>target_column <span class="op">=</span> [<span class="st">'Made_Tournament'</span>]</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> bart2[target_column].copy()</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>X_train, X_test, Y_train, Y_test <span class="op">=</span> train_test_split(X, Y, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">1</span>) </span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> DecisionTreeClassifier()</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> model.fit(X_train,Y_train)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>Y_pred <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy:"</span>,metrics.accuracy_score(Y_test, Y_pred))</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>test_results <span class="op">=</span> []</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>train_results <span class="op">=</span> []</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> num_layer <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">20</span>):</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> DecisionTreeClassifier(max_depth<span class="op">=</span>num_layer)</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> model.fit(X_train, Y_train)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>    yp_train <span class="op">=</span> model.predict(X_train)</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    yp_test <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    test_results.append([num_layer, accuracy_score(Y_test, yp_test), recall_score(Y_test, yp_test, pos_label<span class="op">=</span><span class="dv">0</span>),</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>                         recall_score(Y_test, yp_test, pos_label<span class="op">=</span><span class="dv">1</span>)])</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>    train_results.append([num_layer, accuracy_score(Y_train, yp_train), recall_score(Y_train, yp_train, pos_label<span class="op">=</span><span class="dv">0</span>),</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>                          recall_score(Y_train, yp_train, pos_label<span class="op">=</span><span class="dv">1</span>)])</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>num_layers <span class="op">=</span> [result[<span class="dv">0</span>] <span class="cf">for</span> result <span class="kw">in</span> test_results]</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>train_accuracy_values <span class="op">=</span> [result[<span class="dv">1</span>] <span class="cf">for</span> result <span class="kw">in</span> train_results]</span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>test_accuracy_values <span class="op">=</span> [result[<span class="dv">1</span>] <span class="cf">for</span> result <span class="kw">in</span> test_results]</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>train_recall_0_values <span class="op">=</span> [result[<span class="dv">2</span>] <span class="cf">for</span> result <span class="kw">in</span> train_results]</span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>test_recall_0_values <span class="op">=</span> [result[<span class="dv">2</span>] <span class="cf">for</span> result <span class="kw">in</span> test_results]</span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>train_recall_1_values <span class="op">=</span> [result[<span class="dv">3</span>] <span class="cf">for</span> result <span class="kw">in</span> train_results]</span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>test_recall_1_values <span class="op">=</span> [result[<span class="dv">3</span>] <span class="cf">for</span> result <span class="kw">in</span> test_results]</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, train_accuracy_values, label<span class="op">=</span><span class="st">'Training Accuracy'</span>, marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'green'</span>)</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, test_accuracy_values, label<span class="op">=</span><span class="st">'Testing Accuracy'</span>, marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'purple'</span>)</span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of Layers in Decision Tree (max_depth)'</span>)</span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Accuracy'</span>)</span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Training and Testing Accuracy vs. Number of Layers'</span>)</span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, train_recall_0_values, label<span class="op">=</span><span class="st">'Train Recall (y=0)'</span>, marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'green'</span>)</span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, test_recall_0_values, label<span class="op">=</span><span class="st">'Test Recall (y=0)'</span>, marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'purple'</span>)</span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of Layers in Decision Tree (max_depth)'</span>)</span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Recall for y=0'</span>)</span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Training and Testing Recall for y=0 vs. Number of Layers'</span>)</span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, train_recall_1_values, label<span class="op">=</span><span class="st">'Train Recall (y=1)'</span>, marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'green'</span>)</span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a>plt.plot(num_layers, test_recall_1_values, label<span class="op">=</span><span class="st">'Test Recall (y=1)'</span>, marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'purple'</span>)</span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Number of Layers in Decision Tree (max_depth)'</span>)</span>
+<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Recall for y=1'</span>)</span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Training and Testing Recall for y=1 vs. Number of Layers'</span>)</span>
+<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="images/train2.png" class="img-fluid"></p>
+<p><img src="images/test2.png" class="img-fluid"></p>
+<p><img src="images/recall22.png" class="img-fluid"></p>
+<p>After excluding those columns and rerunning our model, we now see that the optimal layers for our decision tree should be 4. Further, our metrics never quite reach the same level as they did when we left WAB, W, and BARTHAG in. To me, these results are a lot more meaningful as they reflect specific metrics that a team can focus on, rather than metrics that are already an aggregation of others.</p>
+<div class="cell" data-execution_count="11">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tree.DecisionTreeClassifier(max_depth<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> model.fit(X_train, Y_train)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>yp_train <span class="op">=</span> model.predict(X_train)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>yp_test <span class="op">=</span> model.predict(X_test)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>cm_test <span class="op">=</span> confusion_matrix(Y_test, yp_test)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">4</span>))</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>sns.heatmap(cm_test, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">'d'</span>, cmap<span class="op">=</span><span class="st">'Blues'</span>, annot_kws<span class="op">=</span>{<span class="st">"size"</span>: <span class="dv">16</span>}, cbar<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>            xticklabels<span class="op">=</span>[<span class="st">'Missed Tournament'</span>, <span class="st">'Made Tournament'</span>], yticklabels<span class="op">=</span>[<span class="st">'Missed Tournament'</span>, <span class="st">'Made Tournament'</span>])</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Confusion Matrix - Test Set'</span>)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'True Label'</span>) </span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Predicted Label'</span>) </span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'confusion_matrix_3.png'</span>)</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="confusion_matrix_3.png" class="img-fluid"></p>
+<div class="cell" data-execution_count="12">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>accuracy_test <span class="op">=</span> accuracy_score(Y_test, yp_test)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>precision_test <span class="op">=</span> precision_score(Y_test, yp_test)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>recall_test <span class="op">=</span> recall_score(Y_test, yp_test)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Metrics - Test Set:"</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Accuracy: </span><span class="sc">{</span>accuracy_test<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Precision: </span><span class="sc">{</span>precision_test<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Recall: </span><span class="sc">{</span>recall_test<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Metrics - Test Set:
+Accuracy: 0.9167
+Precision: 0.8095
+Recall: 0.6648</code></pre>
+</div>
+</div>
+<p>Even after four splits, our metrics are still lower than before. Our model was able to accurately predict the outcome for 969 of the 1057 teams (91.7%). This honestly is still rather impressive. 119 of the 179 teams our model thought would make the tournament (66.5%) did, and 119 of the 147 teams who actually made the tournament were classified correctly. Obviously this is a big step down from before, but since there were no cheating metrics to go off of, the model was forced to examine looser fitting patterns.</p>
+<div class="cell" data-execution_count="13">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">6</span>, <span class="dv">8</span>))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>plot_tree(model, filled<span class="op">=</span><span class="va">True</span>, feature_names<span class="op">=</span>X_train.columns, class_names<span class="op">=</span>[<span class="st">'0'</span>, <span class="st">'1'</span>], rounded<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Decision Tree Visualization'</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'dt2.png'</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><img src="dt2.png" class="img-fluid" width="345"></p>
+<div class="cell" data-execution_count="14">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>tree_summary <span class="op">=</span> tree.export_text(model, feature_names<span class="op">=</span>X_train.columns.tolist())</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tree_summary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>|--- YearOffenseRank &lt;= 39.50
+|   |--- YearDefenseRank &lt;= 140.50
+|   |   |--- YearDefenseRank &lt;= 60.50
+|   |   |   |--- TOR &lt;= 21.80
+|   |   |   |   |--- class: 1
+|   |   |   |--- TOR &gt;  21.80
+|   |   |   |   |--- class: 0
+|   |   |--- YearDefenseRank &gt;  60.50
+|   |   |   |--- YearOffenseRank &lt;= 15.50
+|   |   |   |   |--- class: 1
+|   |   |   |--- YearOffenseRank &gt;  15.50
+|   |   |   |   |--- class: 1
+|   |--- YearDefenseRank &gt;  140.50
+|   |   |--- YearOffenseRank &lt;= 18.50
+|   |   |   |--- YearDefenseRank &lt;= 221.50
+|   |   |   |   |--- class: 1
+|   |   |   |--- YearDefenseRank &gt;  221.50
+|   |   |   |   |--- class: 0
+|   |   |--- YearOffenseRank &gt;  18.50
+|   |   |   |--- TORD &lt;= 18.05
+|   |   |   |   |--- class: 0
+|   |   |   |--- TORD &gt;  18.05
+|   |   |   |   |--- class: 0
+|--- YearOffenseRank &gt;  39.50
+|   |--- YearDefenseRank &lt;= 61.50
+|   |   |--- YearOffenseRank &lt;= 127.50
+|   |   |   |--- YearDefenseRank &lt;= 37.50
+|   |   |   |   |--- class: 1
+|   |   |   |--- YearDefenseRank &gt;  37.50
+|   |   |   |   |--- class: 0
+|   |   |--- YearOffenseRank &gt;  127.50
+|   |   |   |--- EFG_O &lt;= 51.50
+|   |   |   |   |--- class: 0
+|   |   |   |--- EFG_O &gt;  51.50
+|   |   |   |   |--- class: 1
+|   |--- YearDefenseRank &gt;  61.50
+|   |   |--- YearOffenseRank &lt;= 90.50
+|   |   |   |--- 2P_O &lt;= 52.45
+|   |   |   |   |--- class: 0
+|   |   |   |--- 2P_O &gt;  52.45
+|   |   |   |   |--- class: 0
+|   |   |--- YearOffenseRank &gt;  90.50
+|   |   |   |--- EFG_D &lt;= 49.45
+|   |   |   |   |--- class: 0
+|   |   |   |--- EFG_D &gt;  49.45
+|   |   |   |   |--- class: 0
+</code></pre>
+</div>
+</div>
+<p>From this, we can see the new divisions our tree created. Our root node was YearOffenseRank. While being strong offensively was a good indicator of whether a team made the tournament, a team could still be incredibly lacking at defense and be not particularly good. An example of one of these teams would be 2023 Toledo, who was 5th in the country in offensive efficiency, yet was 294th in defense and missed the tournament entirely. 2023 Ohio State was 17th in the country in offense, but finished the season with a 16-19 record and were nowhere close to qualifying. Other metrics that appear are YearDefenseRank, Turnover Rate, Offensive and Defensive Effective Field Goal Percentage, and 2 Point Offense. Again, yearly offense and defense rankings seem to do most of the heavy lifting, so it might be worthwhile to remove those as well, but this model at least tells us much more about our dataset.</p>
+</section>
+<section id="conclusion" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
+<p>Using decision trees for classification is honestly some of the most fun I’ve had with this project. Because they’re so intuitive, it makes understanding underlying patterns in the data much easier. The big takeaways here are that the BARTHAG and WAB metrics essentially do a lot of the heavy lifting for my project, and someone much more experienced than me has done a far better job than I am currently able to. Regardless, removing those columns and checking out other important factors gave me a lot of context for what a team should look to prioritize. For my first time using decision trees, I walked away with a much better understanding of both how they work as well as their usefulness for classification.</p>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
